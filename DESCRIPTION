@@ -20,7 +20,8 @@ Imports:
 	magrittr,
 	tibble,
 	shinyjs,
-	tidyr
+	tidyr,
+	data.table
 Remotes: KevinMcDonnell6/chorddiag
 License: What license is it under?
 Encoding: UTF-8
