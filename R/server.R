@@ -74,7 +74,8 @@ ChordShinyAppServer <- function(input, output, session) {
       processData <-  processMGRAST(input$MGMid,DATA_DIR, output, e=environment())
        
       # assign taxa / LCA
-      shinyjs::html("progress","\nAssigning LCA",add = T)
+      logging <- paste0(logging,"\nAssigning LCA...")
+      shinyjs::html("progress",logging)
       processData <- assign_taxa(processData,logging)
       colnames(processData) <- stringr::str_to_title(colnames(processData))
       shinyjs::html("progress","\nAssigning LCA",add = T)
