@@ -18,7 +18,7 @@ ChordShinyAppUI <- shiny::fluidPage(
                       ),
                       
                       shiny::mainPanel(shiny::verbatimTextOutput("Status"),
-                                       shinyjs::useShinyjs(), br(),
+                                       shinyjs::useShinyjs(), shiny::br(),
                                       
                                        "Progress:",
                                        shiny::tags$pre(id = "progress")
