@@ -43,7 +43,7 @@ ChordShinyAppServer <- function(input, output, session) {
   #################################################################
   
   shiny::observeEvent(input$preparedata,{
-    
+    shinyjs::useShinyjs()
     # create directory if it doesn't exist
     DATA_DIR <- file.path(path.expand("~"),".chordomics")
     if(!dir.exists(DATA_DIR)){
