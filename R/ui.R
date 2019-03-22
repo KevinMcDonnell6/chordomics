@@ -1,4 +1,4 @@
-ChordShinyAppUI <- shiny::fluidPage(
+ChordShinyAppUI <- shiny::fluidPage( shinyjs::useShinyjs(),
   shiny::tags$head(shiny::tags$style(".rightAlign{float:right;}
                                      .shiny-notification{position:fixed;
                                      top: calc(50%);;
@@ -18,12 +18,12 @@ ChordShinyAppUI <- shiny::fluidPage(
                       ),
                       
                       shiny::mainPanel(shiny::verbatimTextOutput("Status"),
-                                       shinyjs::useShinyjs(), shiny::br(),
-                                      
+                                       shiny::br(),
+                                       
                                        "Progress:",
                                        shiny::tags$pre(id = "progress")
                                        
-                                       )
+                      )
                       
                     ))),
     shiny::tabPanel(
@@ -42,10 +42,10 @@ ChordShinyAppUI <- shiny::fluidPage(
           shiny::p("Ensure the file type is csv format and contains headings
                    of taxonomic rank and 'predicted.function'")
           
-          )
+        )
       )
       )
-      ),
+    ),
     shiny::tabPanel("Plot",
                     
                     # Sidebar with a slider input for zoom and level of taxa 
@@ -79,5 +79,5 @@ ChordShinyAppUI <- shiny::fluidPage(
                       )
                     )
     )
-    )
   )
+)

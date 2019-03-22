@@ -61,7 +61,7 @@ ChordShinyAppServer <- function(input, output, session) {
       shinyjs::html("progress","\nSaving file",add = T)
       New_Name <- gsub(pattern = "(.*)(\\..*)",replacement = "\\1",x=input$rawMPAfile$name)#"(.*?)")
       # print(New_Name)
-      write.csv(processedData,file.path(DATA_DIR,paste(New_Name,"clean.csv")))
+      write.csv(processedData,file.path(DATA_DIR,paste0(New_Name,"_clean.csv")))
       shinyjs::html("progress","\nDone",add = T)
       
     }else if(input$MGMid != ""){
@@ -78,7 +78,7 @@ ChordShinyAppServer <- function(input, output, session) {
       shinyjs::html("progress",logging)
       processData <- assign_taxa(processData,logging)
       colnames(processData) <- stringr::str_to_title(colnames(processData))
-      shinyjs::html("progress","\nAssigning LCA",add = T)
+      
       colnames(processData)[colnames(processData)=="Cogs_by_seq"]<-"COG"
       processData <- tidyr::separate_rows(processData,"COG",sep=";")
       
