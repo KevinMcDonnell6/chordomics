@@ -142,7 +142,7 @@ ChordShinyAppServer <- function(input, output, session) {
     }
     
     if(!is.null(exampleData())){
-      names_ <- c("Exampledata1","Exampledata2")
+      names_ <- c("Day1","Day2","Day3")
     }
     return(names_)
   })
