@@ -106,13 +106,14 @@ ChordShinyAppServer <- function(input, output, session) {
     }
   })
   
-  
+  # Reactice to hold example datasets
   exampleData <- reactiveVal()
   observeEvent(input$example,{
     Data <- list()
-    Data[["df1"]] <- exampledata1#read.csv(paste0(path.expand("~"),"/groupfuntest.csv"),stringsAsFactors = F)
-    Data[["df2"]] <- exampledata2#read.csv(paste0(path.expand("~"),"/groupfuntestall.csv"),stringsAsFactors = F)
-    # Data[[1]] <- rbind(Data[[2]])#,Data[[3]])
+    Data[["df1"]] <- Day1#exampledata1#read.csv(paste0(path.expand("~"),"/groupfuntest.csv"),stringsAsFactors = F)
+    Data[["df2"]] <- Day3#exampledata2#read.csv(paste0(path.expand("~"),"/groupfuntestall.csv"),stringsAsFactors = F)
+    Data[["df3"]] <- Day7
+      # Data[[1]] <- rbind(Data[[2]])#,Data[[3]])
     
     exampleData(Data)
     
