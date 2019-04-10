@@ -11,7 +11,8 @@ processMGRAST <- function(ID, TMP_DIR, output,e = environment()){
   #TMP_DIR <- file.path(".","tmp")
   THIS_TMP_DIR <- file.path(TMP_DIR, ID)
   taxlevel_for_matching <- "species"
-  
+  logging<-paste(logging,"Creating folder ",  THIS_TMP_DIR,"\n")
+  shinyjs::html("progress",logging)
   # make a place to download our results, with a subdir for each new dataset
   if(!exists(THIS_TMP_DIR)){
     dir.create(THIS_TMP_DIR)
