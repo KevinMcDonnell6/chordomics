@@ -17,7 +17,7 @@ devtools::install_github('KevinMcDonnell6/chordomicsTest6')
 
 # Running Chordomics
 ## Preparing your metaproteomics data
-The input data must be `.csv` format, with column names. The output from programs like MPA^[<https://github.com/compomics/meta-proteome-analyzer>] is iteal; It will look for columns for <x, y, and z>
+The input data must be `.csv` format, with column names. The output from programs like MPA^[<https://github.com/compomics/meta-proteome-analyzer>] is iteal; It will look for columns "Proteins", containing one or more Uniprot Accessions.
 ## Preparing your metagenomics data
 
 
@@ -39,3 +39,9 @@ Add labels to COG ids
 Saving file
 Done
 ## with metagenomic/metatransciptomic data
+
+
+
+# Troubleshooting
+## Metaproteomicc data input data
+The fields in the csv file should be quoted, as the lists of Uniprot accessions are also comma-separated in the output from the MPA.  So, ensure the files are quoted, commas are used as the separator, and commas are also used as the within-field seprator.

@@ -58,7 +58,8 @@ ChordShinyAppServer <- function(input, output, session) {
       #run funtion process MPA
       processedData <- processMPA(input$rawMPAfile$datapath)
 
-      shinyjs::html("progress","\nSaving file",add = T)
+      shinyjs::html("progress", "\nSaving file",add = T)
+      shinyjs::html("progress", paste0("\nResults in ",DATA_DIR), add = T)
       New_Name <- gsub(pattern = "(.*)(\\..*)",replacement = "\\1",x=input$rawMPAfile$name)#"(.*?)")
       # print(New_Name)
       write.csv(processedData,file.path(DATA_DIR,paste0(New_Name,"_clean.csv")))
