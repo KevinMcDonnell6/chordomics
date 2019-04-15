@@ -1,7 +1,6 @@
 
 ChordShinyAppServer <- function(input, output, session) {
 
-
     processMPA <- function(path, outputdir){
     logging <- ("")
     # read in raw MPA file
@@ -36,13 +35,10 @@ ChordShinyAppServer <- function(input, output, session) {
     return(Data)
 
 
-  }
-
-
+    }
 
   #################################################################
-
-  shiny::observeEvent(input$preparedata,{
+   shiny::observeEvent(input$preparedata,{
     shinyjs::useShinyjs()
     # create directory if it doesn't exist
     DATA_DIR <- file.path(path.expand("~"),"chordomics")
@@ -50,10 +46,7 @@ ChordShinyAppServer <- function(input, output, session) {
       dir.create(DATA_DIR)
     }
 
-
-
     # check mpa file or mg-rast id
-
     if(!is.null(input$rawMPAfile)){
       #run funtion process MPA
       processedData <- processMPA(input$rawMPAfile$datapath)
@@ -61,8 +54,12 @@ ChordShinyAppServer <- function(input, output, session) {
       shinyjs::html("progress", "\nSaving file",add = T)
       shinyjs::html("progress", paste0("\nResults in ",DATA_DIR), add = T)
       New_Name <- gsub(pattern = "(.*)(\\..*)",replacement = "\\1",x=input$rawMPAfile$name)#"(.*?)")
-      # print(New_Name)
-      write.csv(processedData,file.path(DATA_DIR,paste0(New_Name,"_clean.csv")))
+      new_file_name <- paste0(New_Name,"_clean.csv")
+      # write.csv(processedData,file.path(DATA_DIR,paste0(New_Name,"_clean.csv")))
+      output$thedownloadbutton <- shiny::renderUI({
+        shiny::downloadButton('downloadData', 'Download')
+      })
+      print(is.reactivevalues(downloadReady))
       shinyjs::html("progress","\nDone",add = T)
 
     }else if(input$MGMid != ""){
@@ -91,8 +88,12 @@ ChordShinyAppServer <- function(input, output, session) {
       # save data
       shinyjs::html("progress","\nSaving file",add = T)
       New_Name <- input$MGMid
-      # print(New_Name)
-      write.csv(processData,file.path(DATA_DIR,paste0(New_Name,"_clean.csv")))
+                                        # print(New_Name)
+      new_file_name <- paste0(New_Name,"_clean.csv")
+      output$thedownloadbutton <- shiny::renderUI({
+        shiny::downloadButton('downloadData', 'Download')
+      })
+      #write.csv(processData,file.path(DATA_DIR,paste0(New_Name,"_clean.csv")))
       shinyjs::html("progress","\nDone",add = T)
 
         },
@@ -119,6 +120,33 @@ ChordShinyAppServer <- function(input, output, session) {
     exampleData(Data)
 
   })
+  # taken from https://github.com/rstudio/shiny-examples/blob/master/039-download-file/server.R
+  # downloadHandler() takes two arguments, both functions.
+  # The content function is passed a filename as an argument, and
+  #   it should write out data to that filename.
+  output$downloadData <- shiny::downloadHandler(
+
+    # This function returns a string which tells the client
+    # browser what name to use when saving the file.
+    filename = function() {
+        if(!is.null(input$rawMPAfile)){
+            new_file_name <- gsub(
+                pattern = "(.*)(\\..*)",
+                replacement = "\\1_clean.csv",
+                x=input$rawMPAfile$name)#"(.*?)")
+        } else {
+            new_file_name = paste0(input$MGMid,"_clean.csv")
+        }
+        new_file_name
+	  },
+    # This function should write data to a file given to it by
+    # the argument 'file'.
+    content = function(file) {
+      # Write to a file specified by the 'file' argument
+      write.table(processData, file, sep = ",",
+        row.names = FALSE)
+    }
+  )
 
   # REset example data if data loaded in
   observeEvent(input$files,{

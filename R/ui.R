@@ -14,7 +14,8 @@ ChordShinyAppUI <- shiny::fluidPage( shinyjs::useShinyjs(),
                                          label="Upload CSVs here",
                                          multiple = F),
                         shiny::textInput("MGMid","MG-RAST Identification",placeholder = "mgm4491407.3"),
-                        shiny::actionButton("preparedata", "Prepare Data")
+                        shiny::actionButton("preparedata", "Prepare Data"),
+                        shiny::uiOutput("thedownloadbutton")
                       ),
 
                       shiny::mainPanel(shiny::verbatimTextOutput("Status"),
@@ -74,7 +75,7 @@ ChordShinyAppUI <- shiny::fluidPage( shinyjs::useShinyjs(),
                         # uiOutput("CPlot"),
                         shiny::htmlOutput("SelectedGroupName"),
                         shiny::htmlOutput("SelectedGrouptaxaName"),
-                        chorddiag::chorddiagOutput("ChordPlot",width="850px",height="1000px")#,
+                        chorddiag::chorddiagOutput("ChordPlot", width="850px", height="1000px")#,
 
                       )
                     )
