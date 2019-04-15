@@ -32,7 +32,7 @@ Once the app is running, follow the steps to preprocess, load, and view your dat
 
 # What it is doing
 ## with metaproteomics data
-Given a metaproteomics csv file, Chordomics gets functional data from UniProt, which is then saved to a `.chordomics` folder in your home directory.  This makes it easier to re-run analyses.  Next, a parsimonious approach is used to filter our what data is being dispayed for a given peptide. Certain check are performed to make sure all the required fields have data, and the
+Given a metaproteomics csv file, Chordomics gets functional data from UniProt, which is then saved to a `chordomics` folder in your home directory.  This makes it easier to re-run analyses.  Next, a parsimonious approach is used to filter our what data is being dispayed for a given peptide. Certain check are performed to make sure all the required fields have data, and the
 Complete
 Add extra rows if needed
 Add labels to COG ids
