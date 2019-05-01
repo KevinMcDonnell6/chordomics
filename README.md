@@ -11,7 +11,7 @@ devtools::install_github("KevinMcDonnell6/chorddiag")
 
 Then download the `chordomics` package using the following command:
 ```r
-devtools::install_github('KevinMcDonnell6/chordomicsTest6')
+devtools::install_github('KevinMcDonnell6/chordomics')
 ```
 
 
