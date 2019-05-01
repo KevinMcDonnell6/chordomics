@@ -11,9 +11,9 @@ if(!"chorddiag" %in% rownames(installed.packages())) {
   devtools::install_github("KevinMcDonnell6/chorddiag")
 }
 if(!"chordomicsTest6" %in% rownames(installed.packages())) {
-  print("Installing chordomicsTest6")
-  devtools::install_github("KevinMcDonnell6/chordomicsTest6")
+  print("Installing chordomics")
+  devtools::install_github("KevinMcDonnell6/chordomics")
 }
-chordomicsTest6::launchApp()
+chordomics::launchApp()
 
 
