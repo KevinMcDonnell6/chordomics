@@ -26,7 +26,7 @@ You will need a run ID from MG-RAST^[<http://www.mg-rast.org/>].
 Next, launch the app!
 
 ```r
-chordomicsTest6::launchApp()
+chordomics::launchApp()
 ```
 
 Once the app is running, follow the steps to preprocess, load, and view your data!
