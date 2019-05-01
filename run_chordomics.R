@@ -10,7 +10,7 @@ if(!"chorddiag" %in% rownames(installed.packages())) {
   print("Installing chorddiag...")
   devtools::install_github("KevinMcDonnell6/chorddiag")
 }
-if(!"chordomicsTest6" %in% rownames(installed.packages())) {
+if(!"chordomics" %in% rownames(installed.packages())) {
   print("Installing chordomics")
   devtools::install_github("KevinMcDonnell6/chordomics")
 }
