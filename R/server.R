@@ -19,14 +19,8 @@ ChordShinyAppServer <- function(input, output, session) {
       logging <- paste0(logging, "\nAdd extra rows if needed")
       shinyjs::html("progress", logging,add = F)
       Data <- tidyr::separate_rows(Data,"UniqueCOGs",sep = " ")
-<<<<<<< HEAD
-      
-      
-=======
 
 
-      # logs(paste(logs(),"<br/>","new line"))
->>>>>>> 707614f0f30b5153fe61606bcf9a75989be90790
       logging <- paste0(logging, "\nAdd labels to COG ids")
       shinyjs::html("progress", logging,add = F)
       Data <- COG_names(Data,"UniqueCOGs")
@@ -37,8 +31,7 @@ ChordShinyAppServer <- function(input, output, session) {
       print(e)})
     
     return(Data)
-<<<<<<< HEAD
-    
+   
     
   }
   
@@ -47,16 +40,7 @@ ChordShinyAppServer <- function(input, output, session) {
   ########################### Prepare Data ######################################
   
   shiny::observeEvent(input$preparedata,{
-    
-=======
 
-
-    }
-
-  #################################################################
-   shiny::observeEvent(input$preparedata,{
-    shinyjs::useShinyjs()
->>>>>>> 707614f0f30b5153fe61606bcf9a75989be90790
     # create directory if it doesn't exist
     DATA_DIR <- file.path(path.expand("~"),"chordomics")
     if(!dir.exists(DATA_DIR)){
@@ -71,18 +55,14 @@ ChordShinyAppServer <- function(input, output, session) {
 
       shinyjs::html("progress", "\nSaving file",add = T)
       shinyjs::html("progress", paste0("\nResults in ",DATA_DIR), add = T)
+
       New_Name <- gsub(pattern = "(.*)(\\..*)",replacement = "\\1",x=input$rawMPAfile$name)#"(.*?)")
-<<<<<<< HEAD
-     
-      write.csv(processedData,file.path(DATA_DIR,paste0(New_Name,"_clean.csv")))
-=======
       new_file_name <- paste0(New_Name,"_clean.csv")
       # write.csv(processedData,file.path(DATA_DIR,paste0(New_Name,"_clean.csv")))
       output$thedownloadbutton <- shiny::renderUI({
         shiny::downloadButton('downloadData', 'Download')
       })
       print(is.reactivevalues(downloadReady))
->>>>>>> 707614f0f30b5153fe61606bcf9a75989be90790
       shinyjs::html("progress","\nDone",add = T)
 
     }else if(input$MGMid != ""){
@@ -111,7 +91,6 @@ ChordShinyAppServer <- function(input, output, session) {
       # save data
       shinyjs::html("progress","\nSaving file",add = T)
       New_Name <- input$MGMid
-                                        # print(New_Name)
       new_file_name <- paste0(New_Name,"_clean.csv")
       output$thedownloadbutton <- shiny::renderUI({
         shiny::downloadButton('downloadData', 'Download')
@@ -138,19 +117,13 @@ ChordShinyAppServer <- function(input, output, session) {
     Data[["df1"]] <- Day1
     Data[["df2"]] <- Day3
     Data[["df3"]] <- Day7
-<<<<<<< HEAD
-    
-=======
-      # Data[[1]] <- rbind(Data[[2]])#,Data[[3]])
 
->>>>>>> 707614f0f30b5153fe61606bcf9a75989be90790
     exampleData(Data)
 
   })
-<<<<<<< HEAD
+
   
   # Reset example data if data loaded in
-=======
   # taken from https://github.com/rstudio/shiny-examples/blob/master/039-download-file/server.R
   # downloadHandler() takes two arguments, both functions.
   # The content function is passed a filename as an argument, and
@@ -179,8 +152,7 @@ ChordShinyAppServer <- function(input, output, session) {
     }
   )
 
-  # REset example data if data loaded in
->>>>>>> 707614f0f30b5153fe61606bcf9a75989be90790
+  # Reset example data if data loaded in
   observeEvent(input$files,{
     exampleData(NULL)
   })
@@ -192,14 +164,8 @@ ChordShinyAppServer <- function(input, output, session) {
   file_name <- shiny::reactive({
     inFile <- input$files
     numberOfFiles <- length(input$files$datapath)
-<<<<<<< HEAD
-    
-=======
-    # if (is.null(inFile))
-    #   return()
-
->>>>>>> 707614f0f30b5153fe61606bcf9a75989be90790
     names_ <- character()
+
     if(!is.null(inFile)){
       for(i in numberOfFiles){
         df_<- read.csv(input$files$datapath[i])
@@ -216,28 +182,15 @@ ChordShinyAppServer <- function(input, output, session) {
 
 
   taxonomicRanksList <- c("Superkingdom","Kingdom","Phylum","Class","Order","Family","Genus","Species")
-<<<<<<< HEAD
   functionList <- c("group.function","predicted.function")
   
-  ######################### Dataset upload ######################### 
   
-  # Reactive to store the Data as a list
-  Data <- shiny::reactive({
-    shiny::req({!is.null(input$files) | !is.null(exampleData())})
-    
-=======
-
   ######################### Dataset upload #########################
 
   # Reactive to store the Data as a list
   Data <- shiny::reactive({
     shiny::req({!is.null(input$files) | !is.null(exampleData())})
-    # validate(
-    #   need(input$files != "", "Please select a data set")
-    # )
-    # print("inside data")
 
->>>>>>> 707614f0f30b5153fe61606bcf9a75989be90790
     Data <- list(All=data.frame(stringsAsFactors = F))
 
     if(!is.null(input$files) & is.null(exampleData())){
@@ -248,15 +201,9 @@ ChordShinyAppServer <- function(input, output, session) {
       for(i in 1:numberOfFiles){
         name_ <- paste("df",i,sep = "")
         assign(name_, read.csv(input$files$datapath[i]))
-<<<<<<< HEAD
-        
         Data[[name_]] <- as.data.frame(get(name_))[intersect(colnames(get(name_)),c(taxonomicRanksList,functionList))]
         
-=======
 
-        Data[[name_]] <- as.data.frame(get(name_))
-
->>>>>>> 707614f0f30b5153fe61606bcf9a75989be90790
         # Convert NULLs to "NO COG"
         if(!is.null(Data[[name_]]$group.function)){
           Data[[name_]]$group.function[Data[[name_]]$group.function == ""] <- "No COG"
@@ -274,13 +221,7 @@ ChordShinyAppServer <- function(input, output, session) {
         Data[[name_]][,intersect(colnames(Data[[name_]]),
                                  taxonomicRanksList)][Data[[name_]][,intersect(colnames(Data[[name_]]),
                                                                                      taxonomicRanksList)]==""]<-"No taxonomy"
-<<<<<<< HEAD
-        
-      
-=======
 
-
->>>>>>> 707614f0f30b5153fe61606bcf9a75989be90790
         # Create dataset a concatenation of all the files
         if(i==1){
           Data[["All"]] <- as.data.frame(Data[[name_]])
@@ -306,15 +247,9 @@ ChordShinyAppServer <- function(input, output, session) {
       for(i in 1:numberOfFiles){
         name_ <- paste("df",i,sep = "")
         assign(name_, exampleData()[[i]])
-<<<<<<< HEAD
-        
+
         Data[[name_]] <- as.data.frame(get(name_))[intersect(colnames(get(name_)),c(taxonomicRanksList,functionList))]
         
-=======
-
-        Data[[name_]] <- as.data.frame(get(name_))
-
->>>>>>> 707614f0f30b5153fe61606bcf9a75989be90790
         if(!is.null(Data[[name_]]$group.function)){
           Data[[name_]]$group.function[Data[[name_]]$group.function == "" | is.na(Data[[name_]]$group.function)] <- "No COG"
         }
@@ -341,30 +276,12 @@ ChordShinyAppServer <- function(input, output, session) {
         }
       }#end for loop
     }#endif statement
-<<<<<<< HEAD
-    
+
     return(Data)
   })
   
   
-  
-=======
 
-    # if(input$example){
-    #   print("inside data 2")
-    #   Data[[2]] <- read.csv("groupfuntest.csv")
-    #   Data[[3]] <- read.csv("groupfuntestall.csv")
-    #   Data[[1]] <- rbind(Data[[2]],Data[[3]])
-    #
-    # }
-    comlist <<-Data
-    return(Data)
-  })
-
-  ###########################################################################
-
-
->>>>>>> 707614f0f30b5153fe61606bcf9a75989be90790
   ###################### Reactive Function and Phylogeny getters#############
 
   # Reactive to hold all taxonomic ranks in the dataset
@@ -380,20 +297,11 @@ ChordShinyAppServer <- function(input, output, session) {
     names_ <- c("group.function","predicted.function")
     return(intersect(names_,col_names))
   })
-<<<<<<< HEAD
-  
+
   
   ################ Reactives for subsetting Tax and function ###########################  
   
   
-=======
-
-
-  ######################################################################################
-  ################ Reactives for subsetting Tax and function ###########################
-
-
->>>>>>> 707614f0f30b5153fe61606bcf9a75989be90790
   # Assigning file names to an output
   output$myFileNames <- shiny::renderText({ file_name() })
 
@@ -435,18 +343,9 @@ ChordShinyAppServer <- function(input, output, session) {
   output$SelectedGrouptaxaName <- shiny::renderText({
     shiny::req(previoustaxa())
     return(paste("<b>Selected Taxa:</b> ",previousrank(),"-",previoustaxa()))})
-<<<<<<< HEAD
+
   
   
-  
-  
-=======
-
-
-
-
-  #################################################################
->>>>>>> 707614f0f30b5153fe61606bcf9a75989be90790
   ############# Selection Tables for plot ####################
 
   # Dataset selection table, default is All
@@ -479,16 +378,8 @@ ChordShinyAppServer <- function(input, output, session) {
     )
    
   )
-<<<<<<< HEAD
-  
-  
-  
-=======
 
-
-  ##################################################################
-
->>>>>>> 707614f0f30b5153fe61606bcf9a75989be90790
+  
   ################ Reset button ######################
   shiny::observeEvent(input$reset,{
     Group(NULL)
@@ -496,29 +387,13 @@ ChordShinyAppServer <- function(input, output, session) {
     previoustaxa(NULL)
     previousrank(taxa_ranks()[input$tbl_rows_selected])
     previousrankholder(NULL)
-<<<<<<< HEAD
-  }) 
+
+    }) 
   
  
   
  ######################## Create Plot ############################
   
-=======
-  })
-
-  ######################################
-  # function to create array of colours
-
-  #getPalette = grDevices::colorRampPalette(brewer.pal(9, "Set1"))
-
-
-
-
-
-  ##################################################################
-  ######################## Create Plot ############################
-
->>>>>>> 707614f0f30b5153fe61606bcf9a75989be90790
   # reactive containg code to create plot
   Cplot <- shiny::reactive({
     numberOfFiles <- length(Data())-1#length(input$files$datapath)
@@ -573,12 +448,6 @@ ChordShinyAppServer <- function(input, output, session) {
     if(!is.null(Grouptaxa()) && Grouptaxa() %in% c("Other Taxa") && all(othertaxa() %in% unique(table1[,taxa_ranks()[s]]))){
 
       table1 <- table1[table1[,taxa_ranks()[s]] %in% othertaxa(),]
-<<<<<<< HEAD
-      
-=======
-      # Predicted.Function.holder <- stringr::str_trim(as.character(Data.holder[,functionSelection()[f]]))
-
->>>>>>> 707614f0f30b5153fe61606bcf9a75989be90790
     }
 
     # If Grouptaxa selected show only that group
@@ -586,20 +455,10 @@ ChordShinyAppServer <- function(input, output, session) {
 
 
       table1 <- table1[table1[,taxa_ranks()[s]]==input$grouptaxaSelection,]
-<<<<<<< HEAD
-      
+
     }else{ Grouptaxa(NULL)}
     
  
-    
-=======
-      # Predicted.Function.holder <- stringr::str_trim(as.character(Data.holder$predicted.function))
-
-    }else{ Grouptaxa(NULL)}
-
-    ###########################################
-
->>>>>>> 707614f0f30b5153fe61606bcf9a75989be90790
     tryCatch({
       # extract functions and taxonomy from dataset
       chord_table <- data.frame(functionCol=table1[,"Predicted.Function"],taxonomy=table1[,taxa_ranks()[s]])#Lowest.Common.Ancestor
@@ -621,16 +480,7 @@ ChordShinyAppServer <- function(input, output, session) {
 
     # summarise the tibble
     mat_list<- chord_table %>% dplyr::group_by(taxonomy,functionCol) %>% dplyr::summarise(n=dplyr::n())
-<<<<<<< HEAD
-    
 
-    
-=======
-
-    #########################################
-    #NEW
-
->>>>>>> 707614f0f30b5153fe61606bcf9a75989be90790
     # Set those below threshold to "Other"
     sum_function <- mat_list %>% dplyr::group_by(functionCol) %>% dplyr::summarise(N=sum(n))
     sum_taxonomy <- mat_list %>% dplyr::group_by(taxonomy) %>% dplyr::summarise(N=sum(n))
@@ -691,9 +541,7 @@ ChordShinyAppServer <- function(input, output, session) {
     mat_list$functionCol<- as.factor(mat_list$functionCol)
     mat_list$taxonomy<- as.factor(mat_list$taxonomy)
     mat_list <- mat_list %>% dplyr::group_by(taxonomy,functionCol) %>% dplyr::summarise(n=sum(n))
-<<<<<<< HEAD
-    
-    
+
     
     ################# Multiple datasets ##############################
     
@@ -703,38 +551,11 @@ ChordShinyAppServer <- function(input, output, session) {
       #seleted rank
       taxa <- taxa_ranks()[s]
     
-=======
-
-
-    # End New
-    #############################################
-
-    ################# Multiple dataset ##############################
-
-    # More new
-
-    if(d==1 & numberOfFiles>1){
-      # print("d=1")
-      # reactor data for bar charts
-      taxa <- taxa_ranks()[s]
-
-
-
-      ######################################################################################################
->>>>>>> 707614f0f30b5153fe61606bcf9a75989be90790
       all_df_sums <- list()
       
       for(i in 2:length(Data())){
         name <- paste("df",i-1,"sum",sep = "")
-<<<<<<< HEAD
-        
-        
-=======
 
-        ##########################
-        # Pre-process data as above given selection
-
->>>>>>> 707614f0f30b5153fe61606bcf9a75989be90790
         # Create holder for data
         Data.holder <- Data()[[i]]
         Data.holder[,taxa_ranks()[s]] <- (stringr::str_trim(as.character(Data()[[i]][,taxa_ranks()[s]])))
@@ -793,15 +614,8 @@ ChordShinyAppServer <- function(input, output, session) {
             Predicted.Function.holder <- stringr::str_trim(as.character(Data.holder[,functionSelection()[f]]))
           }
         }
-<<<<<<< HEAD
-        
- 
-        
-=======
 
-        ######################
-
->>>>>>> 707614f0f30b5153fe61606bcf9a75989be90790
+        
         # Use data.holder and predicted.function.holder to be consistent with earlier preprocessiing
         # Create temporary data frame
         # Then group by function and summarise
@@ -874,15 +688,9 @@ ChordShinyAppServer <- function(input, output, session) {
       Group_sum <- jsonlite::toJSON(as.list(df_group_fun))
 
       df_all <- df_all %>% dplyr::arrange(match(taxa,df_group_tax$taxa),match(Predicted.Function,df_group_fun$Predicted.Function))
-<<<<<<< HEAD
+
       
       
-=======
-
-      ####################################################################################################
-      ####################################################################################################
-
->>>>>>> 707614f0f30b5153fe61606bcf9a75989be90790
       # Convert df_all to list
       # needed for converion to json
       l<-list()
@@ -899,12 +707,8 @@ ChordShinyAppServer <- function(input, output, session) {
         }
 
       }
-<<<<<<< HEAD
-      
-=======
-      # l
 
->>>>>>> 707614f0f30b5153fe61606bcf9a75989be90790
+      
       # convert to json
       exportJson <- jsonlite::toJSON(l)
 
@@ -913,33 +717,15 @@ ChordShinyAppServer <- function(input, output, session) {
     # If the first dataset isnt selected or if there isnt more than one dataset dont export
     if(d!=1 | numberOfFiles==1){exportJson<-NULL
     Group_sum <- NULL}
-<<<<<<< HEAD
-    
-    
-    
-=======
 
-    #############################################
-    #############################################
-
-
-
-
->>>>>>> 707614f0f30b5153fe61606bcf9a75989be90790
     # Group and summarise mat_list
     mat_list_groupFun <- mat_list %>% dplyr::group_by(functionCol) %>% dplyr::summarise(N=sum(n)) %>% dplyr::arrange(dplyr::desc(N))
 
     mat_list_groupTaxa <- mat_list %>% dplyr::group_by(taxonomy) %>% dplyr::summarise(N=sum(n)) %>% dplyr::arrange(dplyr::desc(N))
 
     mat_list <- mat_list %>% dplyr::arrange(match(taxonomy,mat_list_groupTaxa$taxonomy),match(functionCol,mat_list_groupFun$functionCol))
-<<<<<<< HEAD
-    
-    
-=======
 
-
-    ###########################################
->>>>>>> 707614f0f30b5153fe61606bcf9a75989be90790
+    
     # Change in order depending if multiple datasets
     if(d==1 & numberOfFiles>1){
       x <- unique(df_group_fun$Predicted.Function)
@@ -965,17 +751,8 @@ ChordShinyAppServer <- function(input, output, session) {
 
       m_1[toString(df[i,1]),toString(df[i,2])]<-df[i,3]
     }
-<<<<<<< HEAD
-    
-    
-    #################### return diagram ########################
-    
-=======
 
-
-    ############################################
-
->>>>>>> 707614f0f30b5153fe61606bcf9a75989be90790
+    
     # create the chord diagram
     return(
       chorddiag::chorddiag(m_1,type = "bipartite",
@@ -992,13 +769,8 @@ ChordShinyAppServer <- function(input, output, session) {
                            firstfunindex = length(y))
     )
   })
-<<<<<<< HEAD
+
   
-=======
-
-  ##################################################################
->>>>>>> 707614f0f30b5153fe61606bcf9a75989be90790
-
   output$ChordPlot <- chorddiag::renderChorddiag({Cplot()})
 
 
