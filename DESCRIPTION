@@ -1,7 +1,7 @@
-Package: chordomicsTest6
-Title: What the Package Does (one line, title case)
-Version: 0.0.0.9000
-Authors@R: person("First", "Last", email = "first.last@example.com", role = c("aut", "cre"))
+Package: chordomics
+Title: Data annotation and visualisation for meta-omics data
+Version: 1.0.1
+Authors@R: person("Kevin", "McDonnell", email = "k.mcdonnell6@nuigalway.ie", role = c("aut", "cre"))
 Description: What the package does (one paragraph).
 Depends: R (>= 3.4.1)
 Imports:
