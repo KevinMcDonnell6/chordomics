@@ -151,7 +151,8 @@ ChordShinyAppServer <- function(input, output, session) {
       # Write to a file specified by the 'file' argument
       write.table(processedData(), file, sep = ",",
         row.names = FALSE)
-    }
+    },
+    contentType = "text/csv"
   )
 
   # Reset example data if data loaded in
