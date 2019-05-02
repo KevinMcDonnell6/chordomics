@@ -39,6 +39,8 @@ ChordShinyAppServer <- function(input, output, session) {
   
   ########################### Prepare Data ######################################
   
+  processedData <- reactiveVal()
+    
   shiny::observeEvent(input$preparedata,{
 
     # create directory if it doesn't exist
@@ -51,8 +53,8 @@ ChordShinyAppServer <- function(input, output, session) {
     if(!is.null(input$rawMPAfile)){
       
       #run funtion process MPA
-      processedData <- processMPA(input$rawMPAfile$datapath)
-
+      processData <- processMPA(input$rawMPAfile$datapath)
+      processedData(processData)
       shinyjs::html("progress", "\nSaving file",add = T)
       shinyjs::html("progress", paste0("\nResults in ",DATA_DIR), add = T)
 
@@ -87,7 +89,7 @@ ChordShinyAppServer <- function(input, output, session) {
       # COG Names
       shinyjs::html("progress","\nAdding names",add = T)
       processData <- COG_names(processData,"COG")
-
+      processedData(processData)
       # save data
       shinyjs::html("progress","\nSaving file",add = T)
       New_Name <- input$MGMid
@@ -147,7 +149,7 @@ ChordShinyAppServer <- function(input, output, session) {
     # the argument 'file'.
     content = function(file) {
       # Write to a file specified by the 'file' argument
-      write.table(processData, file, sep = ",",
+      write.table(processedData(), file, sep = ",",
         row.names = FALSE)
     }
   )
