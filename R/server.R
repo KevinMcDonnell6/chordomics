@@ -39,7 +39,7 @@ ChordShinyAppServer <- function(input, output, session) {
   
   ########################### Prepare Data ######################################
   
-  processedData <- reactiveVal()
+  processedData <- shiny::reactiveVal()
     
   shiny::observeEvent(input$preparedata,{
 
@@ -113,7 +113,7 @@ ChordShinyAppServer <- function(input, output, session) {
   })
 
   # Reactice to hold example datasets
-  exampleData <- reactiveVal()
+  exampleData <- shiny::reactiveVal()
   observeEvent(input$example,{
     Data <- list()
     Data[["df1"]] <- Day1
