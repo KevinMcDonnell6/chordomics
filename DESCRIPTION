@@ -21,7 +21,8 @@ Imports:
 	tibble,
 	shinyjs,
 	tidyr,
-	data.table
+	data.table,
+	chorddiag
 Remotes: KevinMcDonnell6/chorddiag
 License: What license is it under?
 Encoding: UTF-8
