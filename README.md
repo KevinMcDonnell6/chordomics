@@ -37,7 +37,7 @@ The Plot tab is where the user is able to view the data they have loaded into th
 * Clicking Load Example Data shows already processed data for the user to experiment with.
 * The datasets can be viewed together (default) or individually by selecting the name of the dataset on the left panel.
 * Selecting a taxonomic rank from the panel changes the rank shown on the plot.
-* Selecting a taxonomic group on the chord diagram selects only that taxon. Changing the rank now allows the user to view the subtaxa of their selection.
+* Selecting a taxonomic group on the chord diagram (e.g. "Bacteria" for the example data) selects only that taxon. Changing the rank now allows the user to view the subtaxa of their selection.
 * Similarly the functions can have a hierarchical structure. The example data is labelled with functional categories ("group.function") and their COG ("predicted.function"). This can be applied to other annoatations such as KEGG, applied by the user.
 
 # What it is doing
