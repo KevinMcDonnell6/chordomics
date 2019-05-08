@@ -31,6 +31,15 @@ chordomics::launchApp()
 
 Once the app is running, follow the steps to preprocess, load, and view your data!
 
+
+## Visualising the data
+The Plot tab is where the user is able to view the data they have loaded into the App. 
+Clicking Load Example Data shows already processed data for the user to experiment with.
+The datasets can be viewed together (default) or individually by selecting the name of the dataset on the left panel.
+Selecting a taxonomic rank from the panel changes the rank shown on the plot.
+Selecting a taxonomic group on the chord diagram selects only that taxon. Changing the rank now allows the user to view the subtaxa of their selection.
+Similarly the functions can have a hierarchical structure. The example data is labelled with functional categories ("group.function") and their COG ("predicted.function"). This can be applied to other annoatations such as KEGG, applied by the user.
+
 # What it is doing
 ## with metaproteomics data
 Given a metaproteomics csv file, Chordomics gets functional data from UniProt, which is then saved to a `chordomics` folder in your home directory.  This makes it easier to re-run analyses.  Next, a parsimony approach is used to filter our what data is being dispayed for a given peptide. Certain check are performed to make sure all the required fields have data, and the cleaned data with the COG annotations is returned to be downloaded.
