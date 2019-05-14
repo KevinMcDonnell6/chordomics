@@ -1,25 +1,18 @@
 Package: chordomics
 Title: Data annotation and visualisation for meta-omics data
-Version: 0.1.0
+Version: 1.0.0
 Authors@R: person("Kevin", "McDonnell", email = "k.mcdonnell6@nuigalway.ie", role = c("aut", "cre"))
 Description: What the package does (one paragraph).
 Depends: R (>= 3.4.1)
 Imports:
-	stringr (>= 1.3.1),
+	tidyverse (>= 1.2.1),
 	stringi (>= 1.1.7),
-	dplyr (>= 0.8.0.0),
-	readr (>= 1.1.1),
-	httr (>= 1.3.1),
-	jsonlite (>= 1.5),
 	shiny (>= 1.2),
 	grDevices (>= 3.4.1),
 	DT (>= 0.4),
 	remotes (>= 2.0.2),
 	devtools (>= 2.0.1),
-	magrittr (>= 1.5),
-	tibble (>= 2.0.1),
 	shinyjs,
-	tidyr (>= 0.8.3),
 	data.table,
 	chorddiag
 Remotes: KevinMcDonnell6/chorddiag
