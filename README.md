@@ -5,6 +5,7 @@ Chordomics is a tool to visualize and interpret linked data, such as from metage
 # Installation
 
 To download an R package from GitHub one must first have the `devtools` package installed.
+Install it using the following:
 ```r
 install.packages("devtools")
 ```
