@@ -64,7 +64,7 @@ ChordShinyAppServer <- function(input, output, session) {
       output$thedownloadbutton <- shiny::renderUI({
         shiny::downloadButton('downloadData', 'Download')
       })
-      # print(is.reactivevalues(downloadReady))
+      
       shinyjs::html("progress","\nDone",add = T)
 
     }else if(input$MGMid != ""){
