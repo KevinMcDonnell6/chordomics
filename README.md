@@ -3,13 +3,15 @@
 Chordomics is a tool to visualize and interpret linked data, such as from metagenomics or metaproteomics where both taxanomic and functional data is obtained.
 
 # Installation
-Chordomics relies of the `chorddiag` R package, and can be installed from an R session as follows:
-``` r
+
+To download an R package from GitHub one must first have the `devtools` package installed.
+```r
 install.packages("devtools")
-devtools::install_github("KevinMcDonnell6/chorddiag")
 ```
 
-Then download the `chordomics` package using the following command:
+
+Then to download the `chordomics` package use the following command:
+
 ```r
 devtools::install_github('KevinMcDonnell6/chordomics')
 ```
