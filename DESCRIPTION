@@ -20,7 +20,7 @@ Imports:
 	tibble (>= 2.0.1),
 	shinyjs,
 	tidyr (>= 0.8.3),
-	data.table (>=1.12.0),
+	data.table,
 	chorddiag
 Remotes: KevinMcDonnell6/chorddiag
 License: What license is it under?
