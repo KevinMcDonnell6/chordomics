@@ -5,9 +5,9 @@ COG_names <- function(df,UniqueCOGs = "UniqueCOGs"){
   df <- as.data.frame(df)
   
   len <- nrow(df)
-  df$predicted.function <- ""
+  df$COG_Name <- ""
   df$GroupLetters <- ""
-  df$group.functions <- ""
+  df$COG_Categorys <- ""
   
   for(i in 1:len){
     # print(df$Group)
@@ -15,7 +15,7 @@ COG_names <- function(df,UniqueCOGs = "UniqueCOGs"){
     if(!is.null(df[i,UniqueCOGs]) & !is.na(df[i,UniqueCOGs]) & as.character(df[i,UniqueCOGs]) != "" & any(stringr::str_detect(categories$COG,as.character(df[i,UniqueCOGs])))){
       # print(i)
       res <- categories[stringr::str_detect(categories$COG,as.character(df[,UniqueCOGs][i])),]
-      df$predicted.function[i] <- res$name
+      df$COG_Name[i] <- res$name
       df$GroupLetters[i] <- res$func
       # print(df$GroupLetter[i])
       GL <- unlist(strsplit(df$GroupLetters[i],""))
@@ -23,9 +23,9 @@ COG_names <- function(df,UniqueCOGs = "UniqueCOGs"){
         
         res <- funGroups[stringr::str_detect(funGroups$Code,letter),]
         # print(res$Name)
-        df$group.functions[i] <- ifelse(df$group.functions[i]=="",
+        df$COG_Categorys[i] <- ifelse(df$COG_Categorys[i]=="",
                                        res$Name,
-                                       paste(df$group.functions[i],res$Name,sep = ";")
+                                       paste(df$COG_Categorys[i],res$Name,sep = ";")
                                        )
         } # close loop through letters
       
@@ -34,7 +34,7 @@ COG_names <- function(df,UniqueCOGs = "UniqueCOGs"){
     } # close for loop through reads
   
 
-  df$group.function <- df$group.functions
+  df$COG_Category <- df$COG_Categorys
   
   
  return(df) 

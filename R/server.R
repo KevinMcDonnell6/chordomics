@@ -397,7 +397,7 @@ ChordShinyAppServer <- function(input, output, session) {
   
  ######################## Create Plot ############################
   
-  # reactive containg code to create plot
+  # reactive containing code to create plot
   Cplot <- shiny::reactive({
     numberOfFiles <- length(Data())-1#length(input$files$datapath)
 
