@@ -185,7 +185,7 @@ ChordShinyAppServer <- function(input, output, session) {
 
 
   taxonomicRanksList <- c("Superkingdom","Kingdom","Phylum","Class","Order","Family","Genus","Species")
-  functionList <- c("COG_Category","COG_Name")
+  functionList <- c("group.function","predicted.function")
   
   
   ######################### Dataset upload #########################
@@ -208,12 +208,12 @@ ChordShinyAppServer <- function(input, output, session) {
         
 
         # Convert NULLs to "NO COG"
-        if(!is.null(Data[[name_]]$COG_Category)){
-          Data[[name_]]$COG_Category[Data[[name_]]$COG_Category == ""] <- "No COG"
+        if(!is.null(Data[[name_]]$group.function)){
+          Data[[name_]]$group.function[Data[[name_]]$group.function == ""] <- "No COG"
         }
         # Convert NAs to "NO COG"
-        if(!is.null(Data[[name_]]$COG_Name)){
-          Data[[name_]]$COG_Name[Data[[name_]]$COG_Name == ""] <- "No COG"
+        if(!is.null(Data[[name_]]$predicted.function)){
+          Data[[name_]]$predicted.function[Data[[name_]]$predicted.function == ""] <- "No COG"
         }
 
         # Convert NAs to "NO taxonomy"
@@ -253,11 +253,11 @@ ChordShinyAppServer <- function(input, output, session) {
 
         Data[[name_]] <- as.data.frame(get(name_))[intersect(colnames(get(name_)),c(taxonomicRanksList,functionList))]
         
-        if(!is.null(Data[[name_]]$COG_Category)){
-          Data[[name_]]$COG_Category[Data[[name_]]$COG_Category == "" | is.na(Data[[name_]]$COG_Category)] <- "No COG"
+        if(!is.null(Data[[name_]]$group.function)){
+          Data[[name_]]$group.function[Data[[name_]]$group.function == "" | is.na(Data[[name_]]$group.function)] <- "No COG"
         }
-        if(!is.null(Data[[name_]]$COG_Name)){
-          Data[[name_]]$COG_Name[Data[[name_]]$COG_Name == "" | is.na(Data[[name_]]$COG_Category)] <- "No COG"
+        if(!is.null(Data[[name_]]$predicted.function)){
+          Data[[name_]]$predicted.function[Data[[name_]]$predicted.function == "" | is.na(Data[[name_]]$group.function)] <- "No COG"
         }
 
 
@@ -297,7 +297,7 @@ ChordShinyAppServer <- function(input, output, session) {
   # Reactive to hold function levels
   functionSelection <- shiny::reactive({
     col_names <- colnames(Data()[[1]])
-    names_ <- c("COG_Category","COG_Name")
+    names_ <- c("group.function","predicted.function")
     return(intersect(names_,col_names))
   })
 
@@ -425,7 +425,7 @@ ChordShinyAppServer <- function(input, output, session) {
     }
 
     # Show selected function level
-    table1$COG_Name <- stringr::str_trim(as.character(table1[,functionSelection()[f]]))
+    table1$Predicted.Function <- stringr::str_trim(as.character(table1[,functionSelection()[f]]))
 
     # If "other" functions are selected update the dataset
     if(!is.null(Group()) && Group() %in% c("Other")){
@@ -435,10 +435,10 @@ ChordShinyAppServer <- function(input, output, session) {
     }
 
     # If one of the functional groups is selected update to higher resolution
-    else if(!is.null(Group()) &&  Group() %in% unique(table1$COG_Category)){
+    else if(!is.null(Group()) &&  Group() %in% unique(table1$group.function)){
 
       table1 <- table1[table1[,functionSelection()[f]]==input$groupSelection,]
-      table1$COG_Name <- as.factor(stringr::str_trim(as.character(table1$COG_Name)))
+      table1$Predicted.Function <- as.factor(stringr::str_trim(as.character(table1$predicted.function)))
 
     }
 
@@ -464,7 +464,7 @@ ChordShinyAppServer <- function(input, output, session) {
  
     tryCatch({
       # extract functions and taxonomy from dataset
-      chord_table <- data.frame(functionCol=table1[,"COG_Name"],taxonomy=table1[,taxa_ranks()[s]])#Lowest.Common.Ancestor
+      chord_table <- data.frame(functionCol=table1[,"Predicted.Function"],taxonomy=table1[,taxa_ranks()[s]])#Lowest.Common.Ancestor
 
       # encode NA's as factors
       chord_table$functionCol <- addNA(chord_table$functionCol)
@@ -570,22 +570,22 @@ ChordShinyAppServer <- function(input, output, session) {
         }
 
         # Show selected function level
-        COG_Name.holder <- stringr::str_trim(as.character(Data.holder[,functionSelection()[f]]))
+        Predicted.Function.holder <- stringr::str_trim(as.character(Data.holder[,functionSelection()[f]]))
 
         # If "Other" functions are selected show them
         if(!is.null(Group()) && Group() %in% c("Other")){
 
           Data.holder <- Data.holder[Data.holder[,functionSelection()[f]] %in% others(),]
-          COG_Name.holder <- stringr::str_trim(as.character(Data.holder[,functionSelection()[f]]))
+          Predicted.Function.holder <- stringr::str_trim(as.character(Data.holder[,functionSelection()[f]]))
 
         }
 
 
         # If a functional group is selcted show it at a higher resolution
-        else if(!is.null(Group()) &&  Group() %in% unique(table1$COG_Category)){
+        else if(!is.null(Group()) &&  Group() %in% unique(table1$group.function)){
 
           Data.holder <- Data.holder[Data.holder[,functionSelection()[f]]==input$groupSelection,]
-          COG_Name.holder <- stringr::str_trim(as.character(Data.holder$COG_Name))
+          Predicted.Function.holder <- stringr::str_trim(as.character(Data.holder$predicted.function))
 
         }
 
@@ -596,11 +596,11 @@ ChordShinyAppServer <- function(input, output, session) {
           Data.holder <- Data.holder[Data.holder[,taxa_ranks()[s]] %in% othertaxa(),]
 
           # Show selcted functions as above
-          if(!is.null(Group()) &&  Group() %in% unique(table1$COG_Category)){
-            COG_Name.holder <- stringr::str_trim(as.character(Data.holder$COG_Name))
+          if(!is.null(Group()) &&  Group() %in% unique(table1$group.function)){
+            Predicted.Function.holder <- stringr::str_trim(as.character(Data.holder$predicted.function))
 
           }else{
-            COG_Name.holder <- stringr::str_trim(as.character(Data.holder[,functionSelection()[f]]))
+            Predicted.Function.holder <- stringr::str_trim(as.character(Data.holder[,functionSelection()[f]]))
           }
         }
 
@@ -610,22 +610,22 @@ ChordShinyAppServer <- function(input, output, session) {
 
 
           Data.holder <- Data.holder[Data.holder[,taxa_ranks()[s]]==input$grouptaxaSelection,]
-          if(!is.null(Group()) &&  Group() %in% unique(table1$COG_Category)){
-            COG_Name.holder <- stringr::str_trim(as.character(Data.holder$COG_Name))
+          if(!is.null(Group()) &&  Group() %in% unique(table1$group.function)){
+            Predicted.Function.holder <- stringr::str_trim(as.character(Data.holder$predicted.function))
 
           }else{
-            COG_Name.holder <- stringr::str_trim(as.character(Data.holder[,functionSelection()[f]]))
+            Predicted.Function.holder <- stringr::str_trim(as.character(Data.holder[,functionSelection()[f]]))
           }
         }
 
         
-        # Use data.holder and COG_Name.holder to be consistent with earlier preprocessiing
+        # Use data.holder and predicted.function.holder to be consistent with earlier preprocessiing
         # Create temporary data frame
         # Then group by function and summarise
         temp <- data.frame(taxa=Data.holder[,taxa],#taxa=stringr::str_trim(as.character(table1[,taxa])),#stringr::str_trim(as.character(Data()[[i]][,taxa])),
-                           COG_Name = COG_Name.holder,#COG_Name.holder,#stringr::str_trim(as.character(table1[,functionSelection()[f]])),#stringr::str_trim(as.character(Data()[[i]][,functionSelection()[f]])),
+                           Predicted.Function = Predicted.Function.holder,#Predicted.Function.holder,#stringr::str_trim(as.character(table1[,functionSelection()[f]])),#stringr::str_trim(as.character(Data()[[i]][,functionSelection()[f]])),
                            stringsAsFactors = F) %>%
-          dplyr::group_by(taxa, COG_Name) %>% dplyr::summarise(N = dplyr::n())
+          dplyr::group_by(taxa, Predicted.Function) %>% dplyr::summarise(N = dplyr::n())
         temp$N <- as.numeric(temp$N)
         colnames(temp)[3] <- paste(file_name()[i-1])
         assign(name, temp)
@@ -643,11 +643,11 @@ ChordShinyAppServer <- function(input, output, session) {
       all_df_sums_join$SUM <- rowSums(all_df_sums_join[,c(3:(length(Data())+1))])
 
       # arrange the data first by taxa then function
-      all_df_sums_join <- dplyr::arrange(all_df_sums_join,taxa,COG_Name)
+      all_df_sums_join <- dplyr::arrange(all_df_sums_join,taxa,Predicted.Function)
 
 
       # Create individual summary tables for taxonomy and function
-      Sum_fun <- all_df_sums_join %>% dplyr::group_by(COG_Name) %>% dplyr::summarise(N=sum(SUM))
+      Sum_fun <- all_df_sums_join %>% dplyr::group_by(Predicted.Function) %>% dplyr::summarise(N=sum(SUM))
       Sum_taxa <- all_df_sums_join %>% dplyr::group_by(taxa) %>% dplyr::summarise(N=sum(SUM))
 
       # getthe total number of entries
@@ -658,10 +658,10 @@ ChordShinyAppServer <- function(input, output, session) {
       all_df_sums_join <- all_df_sums_join %>% replace(is.na(.), 0)
 
       # For given threshold replace entries with "Other"
-      for(i in 1:length(Sum_fun$COG_Name)){
+      for(i in 1:length(Sum_fun$Predicted.Function)){
 
         if(Sum_fun$N[i]/Total_entries < funcThreshold){
-          all_df_sums_join$COG_Name[all_df_sums_join$COG_Name == Sum_fun$COG_Name[i]] <- "Other"
+          all_df_sums_join$Predicted.Function[all_df_sums_join$Predicted.Function == Sum_fun$Predicted.Function[i]] <- "Other"
         }
       }
 
@@ -676,10 +676,10 @@ ChordShinyAppServer <- function(input, output, session) {
       # Re-summarise after re-labelling
       df_all <- all_df_sums_join
       df_all$SUM <- rowSums(df_all[,c(3:(length(Data())+1))])
-      df_all <- df_all %>% dplyr::group_by(taxa,COG_Name) %>%
+      df_all <- df_all %>% dplyr::group_by(taxa,Predicted.Function) %>%
         dplyr::summarise_at(dplyr::vars(colnames(df_all)[c(3:(length(Data())+2))]),sum)#+1 for SUM
 
-      df_group_fun <- df_all %>% dplyr::group_by(COG_Name) %>%
+      df_group_fun <- df_all %>% dplyr::group_by(Predicted.Function) %>%
         dplyr::summarise_at(dplyr::vars(colnames(df_all)[c(3:(length(Data())+1))]),sum)
       df_group_fun$N <- rowSums(df_group_fun[2:(length(Data()))])
       df_group_fun <- dplyr::arrange(df_group_fun,dplyr::desc(N))
@@ -690,7 +690,7 @@ ChordShinyAppServer <- function(input, output, session) {
 
       Group_sum <- jsonlite::toJSON(as.list(df_group_fun))
 
-      df_all <- df_all %>% dplyr::arrange(match(taxa,df_group_tax$taxa),match(COG_Name,df_group_fun$COG_Name))
+      df_all <- df_all %>% dplyr::arrange(match(taxa,df_group_tax$taxa),match(Predicted.Function,df_group_fun$Predicted.Function))
 
       
       
@@ -731,7 +731,7 @@ ChordShinyAppServer <- function(input, output, session) {
     
     # Change in order depending if multiple datasets
     if(d==1 & numberOfFiles>1){
-      x <- unique(df_group_fun$COG_Name)
+      x <- unique(df_group_fun$Predicted.Function)
 
       y<- unique(df_group_tax$taxa)
 
