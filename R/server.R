@@ -185,7 +185,7 @@ ChordShinyAppServer <- function(input, output, session) {
 
 
   taxonomicRanksList <- c("Superkingdom","Kingdom","Phylum","Class","Order","Family","Genus","Species")
-  functionList <- c("group.function","predicted.function")
+  functionList <- c("COG_Category","COG_Name")
   
   
   ######################### Dataset upload #########################
@@ -208,12 +208,12 @@ ChordShinyAppServer <- function(input, output, session) {
         
 
         # Convert NULLs to "NO COG"
-        if(!is.null(Data[[name_]]$group.function)){
-          Data[[name_]]$group.function[Data[[name_]]$group.function == ""] <- "No COG"
+        if(!is.null(Data[[name_]]$COG_Category)){
+          Data[[name_]]$COG_Category[Data[[name_]]$COG_Category == ""] <- "No COG"
         }
         # Convert NAs to "NO COG"
-        if(!is.null(Data[[name_]]$predicted.function)){
-          Data[[name_]]$predicted.function[Data[[name_]]$predicted.function == ""] <- "No COG"
+        if(!is.null(Data[[name_]]$COG_Name)){
+          Data[[name_]]$COG_Name[Data[[name_]]$COG_Name == ""] <- "No COG"
         }
 
         # Convert NAs to "NO taxonomy"
@@ -253,11 +253,11 @@ ChordShinyAppServer <- function(input, output, session) {
 
         Data[[name_]] <- as.data.frame(get(name_))[intersect(colnames(get(name_)),c(taxonomicRanksList,functionList))]
         
-        if(!is.null(Data[[name_]]$group.function)){
-          Data[[name_]]$group.function[Data[[name_]]$group.function == "" | is.na(Data[[name_]]$group.function)] <- "No COG"
+        if(!is.null(Data[[name_]]$COG_Category)){
+          Data[[name_]]$COG_Category[Data[[name_]]$COG_Category == "" | is.na(Data[[name_]]$COG_Category)] <- "No COG"
         }
-        if(!is.null(Data[[name_]]$predicted.function)){
-          Data[[name_]]$predicted.function[Data[[name_]]$predicted.function == "" | is.na(Data[[name_]]$group.function)] <- "No COG"
+        if(!is.null(Data[[name_]]$COG_Name)){
+          Data[[name_]]$COG_Name[Data[[name_]]$COG_Name == "" | is.na(Data[[name_]]$COG_Category)] <- "No COG"
         }
 
 
@@ -297,7 +297,7 @@ ChordShinyAppServer <- function(input, output, session) {
   # Reactive to hold function levels
   functionSelection <- shiny::reactive({
     col_names <- colnames(Data()[[1]])
-    names_ <- c("group.function","predicted.function")
+    names_ <- c("COG_Category","COG_Name")
     return(intersect(names_,col_names))
   })
 
@@ -435,10 +435,10 @@ ChordShinyAppServer <- function(input, output, session) {
     }
 
     # If one of the functional groups is selected update to higher resolution
-    else if(!is.null(Group()) &&  Group() %in% unique(table1$group.function)){
+    else if(!is.null(Group()) &&  Group() %in% unique(table1$COG_Category)){
 
       table1 <- table1[table1[,functionSelection()[f]]==input$groupSelection,]
-      table1$Predicted.Function <- as.factor(stringr::str_trim(as.character(table1$predicted.function)))
+      table1$Predicted.Function <- as.factor(stringr::str_trim(as.character(table1$COG_Name)))
 
     }
 
@@ -582,10 +582,10 @@ ChordShinyAppServer <- function(input, output, session) {
 
 
         # If a functional group is selcted show it at a higher resolution
-        else if(!is.null(Group()) &&  Group() %in% unique(table1$group.function)){
+        else if(!is.null(Group()) &&  Group() %in% unique(table1$COG_Category)){
 
           Data.holder <- Data.holder[Data.holder[,functionSelection()[f]]==input$groupSelection,]
-          Predicted.Function.holder <- stringr::str_trim(as.character(Data.holder$predicted.function))
+          Predicted.Function.holder <- stringr::str_trim(as.character(Data.holder$COG_Name))
 
         }
 
@@ -596,8 +596,8 @@ ChordShinyAppServer <- function(input, output, session) {
           Data.holder <- Data.holder[Data.holder[,taxa_ranks()[s]] %in% othertaxa(),]
 
           # Show selcted functions as above
-          if(!is.null(Group()) &&  Group() %in% unique(table1$group.function)){
-            Predicted.Function.holder <- stringr::str_trim(as.character(Data.holder$predicted.function))
+          if(!is.null(Group()) &&  Group() %in% unique(table1$COG_Category)){
+            Predicted.Function.holder <- stringr::str_trim(as.character(Data.holder$COG_Name))
 
           }else{
             Predicted.Function.holder <- stringr::str_trim(as.character(Data.holder[,functionSelection()[f]]))
@@ -610,8 +610,8 @@ ChordShinyAppServer <- function(input, output, session) {
 
 
           Data.holder <- Data.holder[Data.holder[,taxa_ranks()[s]]==input$grouptaxaSelection,]
-          if(!is.null(Group()) &&  Group() %in% unique(table1$group.function)){
-            Predicted.Function.holder <- stringr::str_trim(as.character(Data.holder$predicted.function))
+          if(!is.null(Group()) &&  Group() %in% unique(table1$COG_Category)){
+            Predicted.Function.holder <- stringr::str_trim(as.character(Data.holder$COG_Name))
 
           }else{
             Predicted.Function.holder <- stringr::str_trim(as.character(Data.holder[,functionSelection()[f]]))
@@ -619,7 +619,7 @@ ChordShinyAppServer <- function(input, output, session) {
         }
 
         
-        # Use data.holder and predicted.function.holder to be consistent with earlier preprocessiing
+        # Use data.holder and COG_Name.holder to be consistent with earlier preprocessiing
         # Create temporary data frame
         # Then group by function and summarise
         temp <- data.frame(taxa=Data.holder[,taxa],#taxa=stringr::str_trim(as.character(table1[,taxa])),#stringr::str_trim(as.character(Data()[[i]][,taxa])),
