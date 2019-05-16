@@ -284,7 +284,18 @@ ChordShinyAppServer <- function(input, output, session) {
   })
   
   
-
+  
+  ####################### Individual colours for functions ####################################################  
+  
+  
+  All_fns <- shiny::reactive(names(sort(table(c(Data()[[1]]$COG_Category,"Other")),decreasing = T)))
+  
+  # Colour holder
+  Function_colour_list <- shiny::reactive({
+    num_fns <- length(All_fns())
+    c(rep(rev(grDevices::rainbow(10)),num_fns %/% 10),rev(grDevices::rainbow(num_fns %%10)) )
+  })
+  
   ###################### Reactive Function and Phylogeny getters#############
 
   # Reactive to hold all taxonomic ranks in the dataset
@@ -315,7 +326,8 @@ ChordShinyAppServer <- function(input, output, session) {
   previoustaxa <- shiny::reactiveVal(NULL)
   previousrank <- shiny::reactiveVal(NULL)
   previousrankholder <- shiny::reactiveVal(NULL)
-
+  previousFun <- shiny::reactiveVal(NULL)
+  
   # When Group is selected, assign name to Group (groupSelection comes from JS)
   shiny::observeEvent(input$groupSelection,{
     Group(input$groupSelection)
@@ -390,7 +402,8 @@ ChordShinyAppServer <- function(input, output, session) {
     previoustaxa(NULL)
     previousrank(taxa_ranks()[input$tbl_rows_selected])
     previousrankholder(NULL)
-
+    previousFun(NULL)
+    
     }) 
   
  
@@ -429,9 +442,16 @@ ChordShinyAppServer <- function(input, output, session) {
 
     # If "other" functions are selected update the dataset
     if(!is.null(Group()) && Group() %in% c("Other")){
-
-      table1 <- table1[table1[,functionSelection()[f]] %in% others(),]
-
+      
+      # colours update
+      if(!is.null(previousFun())){
+        table1 <- table1[table1[,functionSelection()[f]]%in%previousFun() & table1[,"COG_Name"] %in% others(),]
+        table1$Predicted.Function <- stringr::str_trim(as.character(table1[,"COG_Name"]))
+        # print(table1$Predicted.Function)
+      }else{
+        table1 <- table1[table1[,functionSelection()[f]] %in% others(),]
+        
+      }
     }
 
     # If one of the functional groups is selected update to higher resolution
@@ -439,10 +459,12 @@ ChordShinyAppServer <- function(input, output, session) {
 
       table1 <- table1[table1[,functionSelection()[f]]==input$groupSelection,]
       table1$Predicted.Function <- as.factor(stringr::str_trim(as.character(table1$COG_Name)))
-
+      previousFun(Group())
+      
     }
 
-    else { Group(NULL)}
+    else { Group(NULL)
+      previousFun(NULL)}
 
 
     ##################### Taxonomy if Statements ################
@@ -514,7 +536,7 @@ ChordShinyAppServer <- function(input, output, session) {
     }
 
     # If group is selcted update others
-    if(is.null(Group())){ #&& Group()!="Other"){
+    if(is.null(Group()) || Group()!="Other"){
       others(others_holder)
 
     }
@@ -574,10 +596,17 @@ ChordShinyAppServer <- function(input, output, session) {
 
         # If "Other" functions are selected show them
         if(!is.null(Group()) && Group() %in% c("Other")){
-
-          Data.holder <- Data.holder[Data.holder[,functionSelection()[f]] %in% others(),]
-          Predicted.Function.holder <- stringr::str_trim(as.character(Data.holder[,functionSelection()[f]]))
-
+          
+          # colours update
+          if(!is.null(previousFun())){
+            Data.holder <- Data.holder[Data.holder[,functionSelection()[f]]%in%previousFun() & Data.holder[,"COG_Name"] %in% others(),]
+            Predicted.Function.holder <- stringr::str_trim(as.character(Data.holder[,"COG_Name"]))
+            
+          }else{
+            Data.holder <- Data.holder[Data.holder[,functionSelection()[f]] %in% others(),]
+            Predicted.Function.holder <- stringr::str_trim(as.character(Data.holder[,functionSelection()[f]]))
+            
+          }
         }
 
 
@@ -614,8 +643,16 @@ ChordShinyAppServer <- function(input, output, session) {
             Predicted.Function.holder <- stringr::str_trim(as.character(Data.holder$COG_Name))
 
           }else{
-            Predicted.Function.holder <- stringr::str_trim(as.character(Data.holder[,functionSelection()[f]]))
-          }
+            # colours update
+            if(!is.null(previousFun())){
+              
+              Predicted.Function.holder <- stringr::str_trim(as.character(Data.holder[,"COG_Name"]))
+              
+            }else{
+              Predicted.Function.holder <- stringr::str_trim(as.character(Data.holder[,functionSelection()[f]]))
+              
+            }
+            }
         }
 
         
@@ -755,11 +792,18 @@ ChordShinyAppServer <- function(input, output, session) {
       m_1[toString(df[i,1]),toString(df[i,2])]<-df[i,3]
     }
 
+    # colours update
+    if(input$tbl3_rows_selected == 1 && (is.null(Group()) || Group()=="Other") && is.null(previousFun())){
+      colour_list <- substr(c(grDevices::rainbow(nrow(m_1)), Function_colour_list()[match(x,All_fns())]),0,7)
+      
+    }else{
+      colour_list <- substr(grDevices::rainbow(nrow(m_1)+ncol(m_1)),0,7)
+    }
     
     # create the chord diagram
     return(
       chorddiag::chorddiag(m_1,type = "bipartite",
-                           groupColors = substr(grDevices::rainbow(nrow(m_1)+ncol(m_1)),0,7),
+                           groupColors = colour_list,#substr(grDevices::rainbow(nrow(m_1)+ncol(m_1)),0,7),
                            groupnamePadding = 20,
                            groupnameFontsize = 10,
                            # categoryNames = T,
