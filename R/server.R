@@ -793,17 +793,32 @@ ChordShinyAppServer <- function(input, output, session) {
     }
 
     # colours update
+
+    
+    All_taxons <- names(sort(table(c(as.character(Data()[[1]][,taxa_ranks()[s]]),"Other Taxa")),decreasing = T))
+    print(All_taxons)
+    num_taxa <- length(All_taxons)
+    Taxa_colour_list <- c(rep(rev(grDevices::rainbow(10)),num_taxa %/% 10),rev(grDevices::rainbow(num_taxa %%10)) )
+    
+    # colours update
     if(input$tbl3_rows_selected == 1 && (is.null(Group()) || Group()=="Other") && is.null(previousFun())){
-      colour_list <- substr(c(grDevices::rainbow(nrow(m_1)), Function_colour_list()[match(x,All_fns())]),0,7)
+      colour_list2 <- substr( Function_colour_list()[match(x,All_fns())],0,7)
       
     }else{
-      colour_list <- substr(grDevices::rainbow(nrow(m_1)+ncol(m_1)),0,7)
+      colour_list2 <- substr(grDevices::rainbow(ncol(m_1)),0,7)
     }
+    
+    # if(input$tbl3_rows_selected == 1 && (is.null(Grouptaxa()) || Grouptaxa()=="Other Taxa") && is.null(previoustaxa())){
+    colour_list1 <- substr( Taxa_colour_list[match(y,All_taxons)],0,7)
+    # 
+    
+    
+    
     
     # create the chord diagram
     return(
       chorddiag::chorddiag(m_1,type = "bipartite",
-                           groupColors = colour_list,#substr(grDevices::rainbow(nrow(m_1)+ncol(m_1)),0,7),
+                           groupColors = c(colour_list1,colour_list2),#substr(grDevices::rainbow(nrow(m_1)+ncol(m_1)),0,7),
                            groupnamePadding = 20,
                            groupnameFontsize = 10,
                            # categoryNames = T,
