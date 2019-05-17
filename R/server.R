@@ -447,7 +447,7 @@ ChordShinyAppServer <- function(input, output, session) {
       if(!is.null(previousFun())){
         table1 <- table1[table1[,functionSelection()[f]]%in%previousFun() & table1[,"COG_Name"] %in% others(),]
         table1$Predicted.Function <- stringr::str_trim(as.character(table1[,"COG_Name"]))
-        # print(table1$Predicted.Function)
+       
       }else{
         table1 <- table1[table1[,functionSelection()[f]] %in% others(),]
         
@@ -796,7 +796,7 @@ ChordShinyAppServer <- function(input, output, session) {
 
     
     All_taxons <- names(sort(table(c(as.character(Data()[[1]][,taxa_ranks()[s]]),"Other Taxa")),decreasing = T))
-    print(All_taxons)
+    
     num_taxa <- length(All_taxons)
     Taxa_colour_list <- c(rep(rev(grDevices::rainbow(10)),num_taxa %/% 10),rev(grDevices::rainbow(num_taxa %%10)) )
     
