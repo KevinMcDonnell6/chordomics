@@ -1,6 +1,10 @@
 
 ChordShinyAppServer <- function(input, output, session) {
 
+    url <- shiny::a("GitHub",href="https://github.com/KevinMcDonnell6/chordomics")  
+    output$github <- renderUI({shiny::tagList("For more information visit us on ",url)})
+    
+    
     processMPA <- function(path, outputdir){
     logging <- ("")
     

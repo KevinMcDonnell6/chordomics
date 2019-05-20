@@ -7,28 +7,9 @@ ChordShinyAppUI <- shiny::fluidPage( shinyjs::useShinyjs(),
   # Application title
   # titlePanel("CircosPro"),
   shiny::tabsetPanel(
-    shiny::tabPanel("1. Get Data",
-                    shiny::fluidRow( shiny::sidebarLayout(
-                      shiny::sidebarPanel(
-                        shiny::fileInput("rawMPAfile",
-                                         label="Upload CSVs here",
-                                         multiple = F),
-                        shiny::textInput("MGMid","MG-RAST Identification",placeholder = "mgm4491407.3"),
-                        shiny::actionButton("preparedata", "Prepare Data"),
-                        shiny::uiOutput("thedownloadbutton")
-                      ),
-
-                      shiny::mainPanel(shiny::verbatimTextOutput("Status"),
-                                       shiny::br(),
-
-                                       "Progress:",
-                                       shiny::tags$pre(id = "progress")
-
-                      )
-
-                    ))),
+    
     shiny::tabPanel(
-      "2. File Upload",
+      "1. File Upload",
 
       shiny::fluidRow( shiny::sidebarLayout(
         shiny::sidebarPanel(
@@ -39,15 +20,15 @@ ChordShinyAppUI <- shiny::fluidPage( shinyjs::useShinyjs(),
 
         shiny::mainPanel(
           shiny::h2("Welcome to Chordomics!"),
-          shiny::p("Please upload a dataset from the panel on the left."),
-          shiny::p("Ensure the file type is csv format and contains headings
-                   of taxonomic rank and 'predicted.function'")
-
+          shiny::p("Upload your datasets using the panel on the left."),
+          shiny::p("Ensure the file types are csv format and contain headings
+                   of taxonomic rank (Superkingdom, Kingdom, Phylum, Class, Order, Family, Genus and/or Species) and function ('COG_category' and/or 'COG_Name)"),
+          shiny::uiOutput("github")
         )
       )
       )
     ),
-    shiny::tabPanel("3. Plot",
+    shiny::tabPanel("2. Chord Plot",
 
                     # Sidebar with a slider input for zoom and level of taxa
                     shiny::sidebarLayout(
@@ -79,6 +60,32 @@ ChordShinyAppUI <- shiny::fluidPage( shinyjs::useShinyjs(),
 
                       )
                     )
-    )
+    ),
+    shiny::tabPanel("3. Data Processing",
+                    shiny::fluidRow( shiny::sidebarLayout(
+                      shiny::sidebarPanel(
+                        shiny::fileInput("rawMPAfile",
+                                         label="Upload MPA CSVs here",
+                                         multiple = F),
+                        shiny::textInput("MGMid","MG-RAST Identification",placeholder = "mgm4491407.3"),
+                        shiny::actionButton("preparedata", "Prepare Data"),
+                        shiny::uiOutput("thedownloadbutton")
+                      ),
+                      
+                      shiny::mainPanel(shiny::verbatimTextOutput("Status"),
+                                       shiny::h2("Chordomics Data Preprocessing"),
+                                       shiny::br(),
+                                       shiny::p("Before data can be explored using chordomics it must be presented in the correct format. 
+                                                Use this tool to get both functional (COG) and phylogenetic information as well as format your data."),
+                                       shiny::p("Please upload an MetaProteomeAnalyzer(MPA) dataset to the upper section of the
+                                                panel on the left or enter an MG-RAST ID to the lower section"),
+                                       shiny::p("Once the dataset/ID is entered press Prepare Data"),
+                                       shiny::br(),
+                                       "Progress:",
+                                       shiny::tags$pre(id = "progress")
+                                       
+                      )
+                      
+                    )))
   )
 )
