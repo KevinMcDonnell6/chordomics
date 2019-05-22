@@ -2,7 +2,8 @@ Package: chordomics
 Title: Data annotation and visualisation for meta-omics data
 Version: 1.0.0
 Authors@R: person("Kevin", "McDonnell", email = "k.mcdonnell6@nuigalway.ie", role = c("aut", "cre"))
-Description: What the package does (one paragraph).
+Description: Interactive visualistation tool for linking phylogeny and function in complex microbiomes.
+URL: https://github.com/KevinMcDonnell6/chordomics
 Depends: R (>= 3.4.1)
 Imports:
 	tidyverse (>= 1.2.1),
