@@ -34,6 +34,12 @@ chordomics::launchApp()
 
 Once the app is running, follow the steps to preprocess, load, and view your data!
 
+## Data Processing
+The App can handle both MG-RAST data as well as MetaProteomeAnalyzer (MPA) files.
+
+For metagenomic or metatranscriptomic data first upload your samples to MG-RAST. Then enter your MG-RAST ID into chordomics.
+
+For metaproteomics data upload your MPA files one at a time for processing,
 
 ## Visualising the data
 The Plot tab is where the user is able to view the data they have loaded into the App. 
