@@ -34,6 +34,8 @@ chordomics::launchApp()
 
 Once the app is running, follow the steps to preprocess, load, and view your data!
 
+For detailed step-by-step walkthroughs look into the "Walkthroughs" folder above.
+
 ## Data Processing
 The App can handle both MG-RAST data as well as MetaProteomeAnalyzer (MPA) files.
 
