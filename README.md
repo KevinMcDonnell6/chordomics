@@ -1,6 +1,6 @@
 # chordomics
 
-Chordomics is a tool to visualize and interpret linked data, such as from metagenomics or metaproteomics where both taxanomic and functional data is obtained.
+Chordomics is a tool to visualize and interpret linked data, such as from metagenomics or metaproteomics where both taxonomic and functional data is obtained.
 
 # Installation
 
@@ -56,7 +56,7 @@ The Plot tab is where the user is able to view the data they have loaded into th
 Given a metaproteomics csv file, Chordomics gets functional data from UniProt, which is then saved to a `chordomics` folder in your home directory.  This makes it easier to re-run analyses.  Next, a parsimony approach is used to filter our what data is being dispayed for a given peptide. Certain check are performed to make sure all the required fields have data, and the cleaned data with the COG annotations is returned to be downloaded.
 
 ## with metagenomic/metatransciptomic data
-Given an MG-RAST ID (usually starting with "mgm"), the taxonomy and function annotations are downloaded.  Be warned -- this can take a long time.  For now, please only use datasets from assembled metagenomes, rather than just reads.  The datases are combined -- retaining only the sequences for which both functional and taxanomic annotations are available. The COGs are assigned, NCBI taxids are linked, and the data is returned to be downloaded.
+Given an MG-RAST ID (usually starting with "mgm"), the taxonomy and function annotations are downloaded.  Be warned -- this can take a long time.  For now, please only use datasets from assembled metagenomes, rather than just reads.  The datases are combined -- retaining only the sequences for which both functional and taxonomic annotations are available. The COGs are assigned, NCBI taxids are linked, and the data is returned to be downloaded.
 
 
 
