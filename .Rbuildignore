@@ -1,2 +1,5 @@
-^chordomics\.Rproj$
+^.*\.Rproj$
 ^\.Rproj\.user$
+^Walkthroughs/*$
+^\.travis\.yml$
+^run_chordomics\.R$
