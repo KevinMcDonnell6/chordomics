@@ -6,6 +6,6 @@
 
 launchApp <- function(){
   shinyjs::useShinyjs()
-  shiny::shinyApp(server = ChordShinyAppServer, ui = ChordShinyAppUI)
+  shiny::shinyApp(server = ChordShinyAppServer, ui = ChordShinyAppUI, options = list(launch.browser=T))
 }
 
