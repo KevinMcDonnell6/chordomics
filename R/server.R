@@ -1,4 +1,4 @@
-
+#' @importFrom magrittr "%>%"
 ChordShinyAppServer <- function(input, output, session) {
 
     url <- shiny::a("GitHub",href="https://github.com/KevinMcDonnell6/chordomics")  
@@ -353,7 +353,7 @@ ChordShinyAppServer <- function(input, output, session) {
   # Initialse empty place holder for "Others" category
   othertaxa <- shiny::reactiveVal(character(0))
 
-  # If group selected show their name
+  # If group seleccted show their name
   output$SelectedGroupName <- shiny::renderText({
     shiny::req(Group())
     return(paste("<b>Selected Function:</b> ",Group()))})

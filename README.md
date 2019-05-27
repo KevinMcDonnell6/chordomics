@@ -3,13 +3,16 @@
 Chordomics is a tool to visualize and interpret linked data, such as from metagenomics or metaproteomics where both taxonomic and functional data is obtained.
 
 # Installation
+To install from the commandline, download and run the install script:
 
-To download an R package from GitHub one must first have the `devtools` package installed.
-Install it using the following command in R:
+```{bash}
+ curl -o run_chordomics.R  https://raw.githubusercontent.com/KevinMcDonnell6/chordomics/master/run_chordomics.R && Rscript run_chordomics.R
+```
+
+To install from an R session, one must first have the `devtools` package installed as follows:
 ```r
 install.packages("devtools")
 ```
-
 
 Then to download the `chordomics` package use the following command:
 
@@ -66,7 +69,8 @@ The fields in the csv file should be quoted, as the lists of Uniprot accessions 
 ```
 "Superkingdom","Kingdom","Phylum","Class","Order","Family","Genus","Species", "Proteins"
 ```
-Any extra headers are ignored.
+
+"Proteins" should contain one or more UniProt accessions; any extra headers are ignored.
 
 
 ## Metagenomic input data
