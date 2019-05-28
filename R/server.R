@@ -124,7 +124,9 @@ ChordShinyAppServer <- function(input, output, session) {
     Data[["df2"]] <- Day3
     Data[["df3"]] <- Day7
 
-    exampleData(Data)
+    exampleData(c(system.file("extdata", "Day1.csv", package = "chordomics"),
+                            system.file("extdata", "Day3.csv", package = "chordomics"),
+                            system.file("extdata", "Day7.csv", package = "chordomics")))
 
   })
 
@@ -175,7 +177,7 @@ ChordShinyAppServer <- function(input, output, session) {
 
     if(!is.null(inFile)){
       for(i in numberOfFiles){
-        df_<- read.csv(input$files$datapath[i])
+        #df_<- read.csv(input$files$datapath[i])
         names_ <- c(names_,stringi::stri_extract_first(str = inFile$name, regex = ".*(?=\\.)"))
 
       }
@@ -197,103 +199,69 @@ ChordShinyAppServer <- function(input, output, session) {
   # Reactive to store the Data as a list
   Data <- shiny::reactive({
     shiny::req({!is.null(input$files) | !is.null(exampleData())})
-
+    if (!is.null(exampleData())){
+      files <- exampleData()
+    } else{
+      files <- c()
+      for (f in input$files$datapath){
+        files <- c(files, f)
+      }
+    }
     Data <- list(All=data.frame(stringsAsFactors = F))
-
-    if(!is.null(input$files) & is.null(exampleData())){
-
-      numberOfFiles <- length(input$files$datapath)
-
-      # Loop through the datasets, loading successive ones into a list
-      for(i in 1:numberOfFiles){
-        name_ <- paste("df",i,sep = "")
-        assign(name_, read.csv(input$files$datapath[i]))
-        Data[[name_]] <- as.data.frame(get(name_))[intersect(colnames(get(name_)),c(taxonomicRanksList,functionList))]
+    Datadf <- NA
+    numberOfFiles <- length(files)
 
 
-        # Convert NULLs to "NO COG"
-        if(!is.null(Data[[name_]]$COG_Category)){
-          Data[[name_]]$COG_Category[Data[[name_]]$COG_Category == ""] <- "No COG"
+    # Loop through the datasets, loading successive ones into a list
+    for (i in 1:numberOfFiles) {
+      name_ <- paste0("df", i)
+      tmpdf <- read.csv(files[i])
+      tmpdf <-  tmpdf %>%
+        dplyr::select(intersect(colnames(tmpdf),
+                                c(taxonomicRanksList, functionList)))
+      tmpdf$choromics_dataset <- i
+      for (thiscol in functionList) {
+        if (thiscol %in% colnames(tmpdf)) {
+          # Convert NULLs to "NO COG"
+          tmpdf[, thiscol] <- ifelse(is.null(tmpdf[, thiscol]) |
+                                       is.na(tmpdf[, thiscol]) |
+                                       tmpdf[, thiscol] == "",
+                                     "No COG",
+                                     tmpdf[, thiscol])
         }
-        # Convert NAs to "NO COG"
-        if(!is.null(Data[[name_]]$COG_Name)){
-          Data[[name_]]$COG_Name[Data[[name_]]$COG_Name == ""] <- "No COG"
+      }
+      for (thiscol in taxonomicRanksList) {
+        if (thiscol %in% colnames(tmpdf)) {
+          # Convert NULLs to "NO COG"
+          tmpdf[, thiscol] <- ifelse(is.null(tmpdf[, thiscol]) |
+                                       is.na(tmpdf[, thiscol]) |
+                                       tmpdf[, thiscol] == "",
+                                     "No taxonomy",
+                                     tmpdf[, thiscol])
         }
+      }
+      if (is.na(Datadf)) {
+        Datadf <- tmpdf
+      } else {
+        tryCatch({
+          Datadf <- rbind(Datadf, tmpdf)
+        }, error = function(e) {
+          shiny::showNotification(ui = paste("Datasets of Different structure"),
+                                  duration = NULL)
+        })
+      }
+    } # end files loop
+    Data[["All"]] <- Datadf
+    for (i in 1:numberOfFiles){
+      Data[[i + 1]] <- Datadf %>% dplyr::filter(choromics_dataset == i)
 
-        # Convert NAs to "NO taxonomy"
-        Data[[name_]][,intersect(colnames(Data[[name_]]),
-                                 taxonomicRanksList)][is.na(Data[[name_]][,intersect(colnames(Data[[name_]]),
-                                                                                     taxonomicRanksList)])]<-"No taxonomy"
-        # Convert NULLs to "No taxonomy"
-        Data[[name_]][,intersect(colnames(Data[[name_]]),
-                                 taxonomicRanksList)][Data[[name_]][,intersect(colnames(Data[[name_]]),
-                                                                                     taxonomicRanksList)]==""]<-"No taxonomy"
-
-        # Create dataset a concatenation of all the files
-        if(i==1){
-          Data[["All"]] <- as.data.frame(Data[[name_]])
-        }
-        else{
-          tryCatch({
-            Data[["All"]] <- rbind(Data[["All"]], as.data.frame(Data[[name_]]))
-          }, error = function(e) {
-            shiny::showNotification(ui = paste("Datasets of Different structure"),
-                                    duration = 5)
-          })
-        }
-      }#end for loop
-      tryCatch({
-        stop(!any(functionList %in% colnames(Data[["All"]])), "columns")
-      }, error = function(e) {
-        shiny::showNotification(ui = paste("Dataset(s) missing required columns!"),
-                                duration = NULL)
-      })
-
-    }#endif statement
-
-
-    # Process example Data
-    if(!is.null(exampleData())){
-      # Data <- exampleData()
-      Data <- list(All=data.frame(stringsAsFactors = F))
-
-      numberOfFiles <- length(exampleData())
-
-      # Loop through the datasets, loading successive ones into a list
-      for(i in 1:numberOfFiles){
-        name_ <- paste("df",i,sep = "")
-        assign(name_, exampleData()[[i]])
-
-        Data[[name_]] <- as.data.frame(get(name_))[intersect(colnames(get(name_)),c(taxonomicRanksList,functionList))]
-
-        if(!is.null(Data[[name_]]$COG_Category)){
-          Data[[name_]]$COG_Category[Data[[name_]]$COG_Category == "" | is.na(Data[[name_]]$COG_Category)] <- "No COG"
-        }
-        if(!is.null(Data[[name_]]$COG_Name)){
-          Data[[name_]]$COG_Name[Data[[name_]]$COG_Name == "" | is.na(Data[[name_]]$COG_Category)] <- "No COG"
-        }
-
-
-        Data[[name_]][,intersect(colnames(Data[[name_]]),
-                                 taxonomicRanksList)][is.na(Data[[name_]][,intersect(colnames(Data[[name_]]),
-                                                                                     taxonomicRanksList)])]<-"No taxonomy"
-        Data[[name_]][,intersect(colnames(Data[[name_]]),
-                                 taxonomicRanksList)][Data[[name_]][,intersect(colnames(Data[[name_]]),
-                                                                               taxonomicRanksList)]==""]<-"No taxonomy"
-
-
-
-        # Create dataset a concatenation of all the files
-        if(i==1){
-          Data[["All"]] <- as.data.frame(Data[[name_]])
-        }
-        else{
-          Data[["All"]] <- rbind(Data[["All"]],as.data.frame(Data[[name_]]))
-        }
-      }#end for loop
-    }#endif statement
-
+    }
+    if(!any(functionList %in% colnames(Data[["All"]]))){
+      shiny::showNotification(ui = paste("Dataset(s) missing required columns!"),
+                              duration = NULL)
+    }
     return(Data)
+
   })
 
 
@@ -430,7 +398,7 @@ ChordShinyAppServer <- function(input, output, session) {
     # selected dataset
     d<- input$tbl2_rows_selected
     shiny::req(d)
-
+    print(d)
     # Assign selected datasets
     table1 <- as.data.frame(Data()[[d]], stringsAsFactors = F)
 
