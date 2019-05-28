@@ -811,7 +811,7 @@ ChordShinyAppServer <- function(input, output, session) {
       chorddiag::chorddiag(m_1,type = "bipartite",
                            groupColors = c(colour_list1,colour_list2),#substr(grDevices::rainbow(nrow(m_1)+ncol(m_1)),0,7),
                            groupnamePadding = 20,
-                           groupnameFontsize = 10,
+                           groupnameFontsize = input$fontsize,
                            # categoryNames = T,
                            categorynamePadding = 200,
                            ticklabelFontsize = 9,

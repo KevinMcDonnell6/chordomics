@@ -37,6 +37,7 @@ ChordShinyAppUI <- shiny::fluidPage( shinyjs::useShinyjs(),
 
                         shiny::actionButton("example","Load Example Data"),
                         shiny::sliderInput("margin", "Zoom",  min = 0, max = 400, value = 200),
+                        shiny::sliderInput("fontsize", "Font size",  min = 6, max = 40, value = 10),
                         DT::DTOutput("tbl2"),
                         DT::DTOutput("tbl"),
                         DT::DTOutput("tbl3")
