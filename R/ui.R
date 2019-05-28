@@ -83,7 +83,8 @@ ChordShinyAppUI <- shiny::fluidPage( shinyjs::useShinyjs(),
                                        shiny::p("Once the dataset/ID is entered press Prepare Data"),
                                        shiny::br(),
                                        "Progress:",
-                                       shiny::tags$pre(id = "progress")
+                                       shiny::tags$pre(id = "progress"),
+                                       shiny::HTML("<p style='color:lightgrey'>try mgm4762935.3</p>")
 
                       )
 

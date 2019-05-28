@@ -85,9 +85,11 @@ ChordShinyAppServer <- function(input, output, session) {
       shinyjs::html("progress",logging)
       processData <- assign_taxa(processData,logging)
       colnames(processData) <- stringr::str_to_title(colnames(processData))
+      processData <- processData %>%
+        dplyr::rename("UniqueCOGs"=Cogs_by_seq) %>%
+        tidyr::separate_rows("UniqueCOGs",sep=";")
 
-      colnames(processData)[colnames(processData)=="Cogs_by_seq"]<-"COG"
-      processData <- tidyr::separate_rows(processData,"COG",sep=";")
+      #colnames(processData)[colnames(processData)=="Cogs_by_seq"]<-"COG"
 
 
       # COG Names
@@ -823,26 +825,4 @@ ChordShinyAppServer <- function(input, output, session) {
 
 
   output$ChordPlot <- chorddiag::renderChorddiag({Cplot()})
-  #deal with downloading image as
-  output$dloadImage <- shiny::downloadHandler(
-    if(is.null(webshot:::find_phantom())){
-      webshot::install_phantomjs()
-    },
-    filename = function() { paste("inputataset", '.svg', sep='') },
-    content = function(file) {
-      svg(file)
-      print(output$ChordPlot)
-      dev.off()
-    })
-  # output$dloadImage = downloadHandler(
-  #   filename = 'test.png',
-  #   content = function(file) {
-  #     device <- function(..., width, height) {
-  #       grDevices::png(..., width = width, height = height,
-  #                      res = 300, units = "in")
-  #     }
-  #     ggplot::ggsave(file, plot = Cplot, device = device)
-  #   })
-
-
 }
