@@ -269,7 +269,7 @@ ChordShinyAppServer <- function(input, output, session) {
   ####################### Individual colours for functions ####################################################
 
 
-  All_fns <- shiny::reactive(names(sort(table(c(Data()[[1]]$COG_Category,"Other")),decreasing = T)))
+  All_fns <- shiny::reactive(names(sort(table(c(Data()[["All"]]$COG_Category,"Other")),decreasing = T)))
 
   # Colour holder
   Function_colour_list <- shiny::reactive({
@@ -281,7 +281,7 @@ ChordShinyAppServer <- function(input, output, session) {
 
   # Reactive to hold all taxonomic ranks in the dataset
   taxa_ranks <- shiny::reactive({
-    col_names <- colnames(Data()[[1]])
+    col_names <- colnames(Data()[["All"]])
     Ranks=c("Superkingdom","Kingdom","Phylum","Class","Order","Family","Genus","Species")
     return(intersect(col_names,Ranks))
   })
@@ -398,7 +398,6 @@ ChordShinyAppServer <- function(input, output, session) {
     # selected dataset
     d<- input$tbl2_rows_selected
     shiny::req(d)
-    print(d)
     # Assign selected datasets
     table1 <- as.data.frame(Data()[[d]], stringsAsFactors = F)
 
@@ -411,9 +410,6 @@ ChordShinyAppServer <- function(input, output, session) {
     if (!taxa_ranks()[s] %in% colnames(table1)){
       stop(paste0("Misformatted data: '", s, "' not found in header of input data."))
     }
-    # if (!functionSelection()[f] %in% colnames(table1)){
-    #   stop(paste0("Misformatted data: '", f, "' not found in header of input data."))
-    # }
     # Update function and phylogeny selection
     table1[,taxa_ranks()[s]] <- as.factor(stringr::str_trim(as.character(table1[,taxa_ranks()[s]])))
 
@@ -486,7 +482,9 @@ ChordShinyAppServer <- function(input, output, session) {
       chord_table <- data.frame("functionCol" = as.factor(as.character(chord_table$functionCol)),
                                  "taxonomy"=as.factor(as.character(chord_table$taxonomy)))
     },error= function(e){
-      shiny::showNotification(ui = paste("Error in selected data please reset"),duration = 5)} )
+      shiny::showNotification(ui = paste("Error in selected data please reset"),duration = 5)
+    })
+
 
 
     # summarise the tibble
@@ -697,23 +695,27 @@ ChordShinyAppServer <- function(input, output, session) {
       }
 
       # Re-summarise after re-labelling
+      data_cols <- colnames(all_df_sums_join)[3: (2+numberOfFiles)]
       df_all <- all_df_sums_join
-      df_all$SUM <- rowSums(df_all[,c(3:(length(Data())+1))])
+      df_all$SUM <- rowSums(df_all[, data_cols])
       df_all <- df_all %>% dplyr::group_by(taxa,Predicted.Function) %>%
-        dplyr::summarise_at(dplyr::vars(colnames(df_all)[c(3:(length(Data())+2))]),sum)#+1 for SUM
+        dplyr::summarise_at(data_cols, sum)#+1 for SUM
 
       df_group_fun <- df_all %>% dplyr::group_by(Predicted.Function) %>%
-        dplyr::summarise_at(dplyr::vars(colnames(df_all)[c(3:(length(Data())+1))]),sum)
-      df_group_fun$N <- rowSums(df_group_fun[2:(length(Data()))])
+        dplyr::summarise_at(data_cols, sum)
+      df_group_fun$N <- rowSums(df_group_fun[data_cols])
       df_group_fun <- dplyr::arrange(df_group_fun,dplyr::desc(N))
 
-      df_group_tax <- df_all %>% dplyr::group_by(taxa) %>% dplyr::summarise_at(dplyr::vars(colnames(df_all)[c(3:(length(Data())+1))]),sum)
-      df_group_tax$N <- rowSums(df_group_tax[2:(length(Data()))])
+      df_group_tax <- df_all %>% dplyr::group_by(taxa) %>%
+        dplyr::summarise_at(data_cols,sum)
+      df_group_tax$N <- rowSums(df_group_tax[data_cols])
       df_group_tax <- dplyr::arrange(df_group_tax,dplyr::desc(N))
 
       Group_sum <- jsonlite::toJSON(as.list(df_group_fun))
 
-      df_all <- df_all %>% dplyr::arrange(match(taxa,df_group_tax$taxa),match(Predicted.Function,df_group_fun$Predicted.Function))
+      df_all <- df_all %>% dplyr::arrange(
+        match(taxa,df_group_tax$taxa),
+        match(Predicted.Function,df_group_fun$Predicted.Function))
 
 
 
