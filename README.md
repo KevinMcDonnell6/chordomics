@@ -1,4 +1,4 @@
-# chordomics
+# Chordomics
 
 Chordomics is a tool to visualize and interpret linked data, such as from metagenomics or metaproteomics where both taxonomic and functional data is obtained.
 
@@ -6,7 +6,7 @@ Chordomics is a tool to visualize and interpret linked data, such as from metage
 To install from the commandline, download and run the install script:
 
 ```{bash}
- curl -o run_chordomics.R  https://raw.githubusercontent.com/KevinMcDonnell6/chordomics/master/run_chordomics.R && Rscript run_chordomics.R
+curl -o run_chordomics.R  https://raw.githubusercontent.com/KevinMcDonnell6/chordomics/master/run_chordomics.R && Rscript run_chordomics.R
 ```
 
 To install from an R session, one must first have the `devtools` package installed as follows:
@@ -64,14 +64,18 @@ Given an MG-RAST ID (usually starting with "mgm"), the taxonomy and function ann
 
 
 # Troubleshooting
-## Metaproteomic input data
+## Chordomics input data
+Chordomics currently requires the input to have at least one taxonomic column ("Superkingdom","Kingdom","Phylum","Class","Order","Family","Genus","Species"), and one or more of the following: "COG_Category"	"COG_Name".  This consistency allows us to handle the hierarchical nature of both the functional and taxonomic data.  If you wish to display different types of data, we incorporated  SVG downloading via Crowbar^[<http://nytimes.github.io/svg-crowbar/>].
+
+
+## Metaproteomic utility input data
 The fields in the csv file should be quoted, as the lists of Uniprot accessions are also comma-separated in the output from the MPA.  So, ensure the files are quoted, commas are used as the separator, and commas are also used as the within-field seprator.  The following headers are required:
 ```
 "Superkingdom","Kingdom","Phylum","Class","Order","Family","Genus","Species", "Proteins"
 ```
+"Proteins" should contain one or more UniProt accessions, separated by commas; any extra headers are ignored.
 
-"Proteins" should contain one or more UniProt accessions; any extra headers are ignored.
 
+## Metagenomic/metatranscriptomic utility input data
+If your selected MG-RAST id is running slowly, it is likely due to the time it takes to download the data files.  Sadly, MG-RAST does not provide any given file with both taxonomic and functional information, so we have to download both and merge them.  Try with a small dataset first, such as "mgm4762935.3".
 
-## Metagenomic input data
-If your selected MG-RAST id is running slowly, it is likely due to the time it takes to download the data files.  Sadly, MG-RAST does not provide any given file with both taxonomic and functional information, so we have to download both and merge them.  
