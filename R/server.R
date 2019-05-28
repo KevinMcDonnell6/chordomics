@@ -815,7 +815,7 @@ ChordShinyAppServer <- function(input, output, session) {
                            # categoryNames = T,
                            categorynamePadding = 200,
                            ticklabelFontsize = 9,
-                           tickInterval = max(1,sum(mat_list$n)%/%200),
+                           tickInterval = max(1,sum(mat_list$n)%/%100),
                            margin = 400-input$margin,
                            reactor = exportJson,
                            grouptotals = Group_sum,
