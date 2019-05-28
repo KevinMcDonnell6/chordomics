@@ -119,15 +119,16 @@ ChordShinyAppServer <- function(input, output, session) {
   # Reactice to hold example datasets
   exampleData <- shiny::reactiveVal()
   observeEvent(input$example,{
-    Data <- list()
-    Data[["df1"]] <- Day1
-    Data[["df2"]] <- Day3
-    Data[["df3"]] <- Day7
+    # Data <- list()
+    # Data[["df1"]] <- Day1
+    # Data[["df2"]] <- Day3
+    # Data[["df3"]] <- Day7
 
-    exampleData(c(system.file("extdata", "Day1.csv", package = "chordomics"),
-                            system.file("extdata", "Day3.csv", package = "chordomics"),
-                            system.file("extdata", "Day7.csv", package = "chordomics")))
-
+    exampleData(c(
+      system.file("extdata", "Day1.csv", package = "chordomics"),
+      system.file("extdata", "Day3.csv", package = "chordomics"),
+      system.file("extdata", "Day7.csv", package = "chordomics")
+    ))
   })
 
 
@@ -240,7 +241,7 @@ ChordShinyAppServer <- function(input, output, session) {
                                      tmpdf[, thiscol])
         }
       }
-      if (is.na(Datadf)) {
+      if (i == 1) {
         Datadf <- tmpdf
       } else {
         tryCatch({
@@ -822,6 +823,26 @@ ChordShinyAppServer <- function(input, output, session) {
 
 
   output$ChordPlot <- chorddiag::renderChorddiag({Cplot()})
+  #deal with downloading image as
+  output$dloadImage <- shiny::downloadHandler(
+    if(is.null(webshot:::find_phantom())){
+      webshot::install_phantomjs()
+    },
+    filename = function() { paste("inputataset", '.svg', sep='') },
+    content = function(file) {
+      svg(file)
+      print(output$ChordPlot)
+      dev.off()
+    })
+  # output$dloadImage = downloadHandler(
+  #   filename = 'test.png',
+  #   content = function(file) {
+  #     device <- function(..., width, height) {
+  #       grDevices::png(..., width = width, height = height,
+  #                      res = 300, units = "in")
+  #     }
+  #     ggplot::ggsave(file, plot = Cplot, device = device)
+  #   })
 
 
 }

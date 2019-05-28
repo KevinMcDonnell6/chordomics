@@ -7,7 +7,7 @@ ChordShinyAppUI <- shiny::fluidPage( shinyjs::useShinyjs(),
   # Application title
   # titlePanel("CircosPro"),
   shiny::tabsetPanel(
-    
+
     shiny::tabPanel(
       "1. File Upload",
 
@@ -52,6 +52,7 @@ ChordShinyAppUI <- shiny::fluidPage( shinyjs::useShinyjs(),
                         #downloadButton('foo',class = "rightAlign"),
                         # uiOutput("CPlot"),
                         #verbatimTextOutput("summary"),
+                        shiny::actionButton('dloadImage', "Download",  class = "rightAlign", onclick ="javascript: (function () { var e = document.createElement('script'); e.setAttribute('src', 'https://nytimes.github.io/svg-crowbar/svg-crowbar.js'); e.setAttribute('class', 'svg-crowbar'); document.body.appendChild(e); })();"),
                         shiny::actionButton('reset',"Reset",class = "rightAlign"),
                         # uiOutput("CPlot"),
                         shiny::htmlOutput("SelectedGroupName"),
@@ -71,11 +72,11 @@ ChordShinyAppUI <- shiny::fluidPage( shinyjs::useShinyjs(),
                         shiny::actionButton("preparedata", "Prepare Data"),
                         shiny::uiOutput("thedownloadbutton")
                       ),
-                      
+
                       shiny::mainPanel(shiny::verbatimTextOutput("Status"),
                                        shiny::h2("Chordomics Data Preprocessing"),
                                        shiny::br(),
-                                       shiny::p("Before data can be explored using chordomics it must be presented in the correct format. 
+                                       shiny::p("Before data can be explored using chordomics it must be presented in the correct format.
                                                 Use this tool to get both functional (COG) and phylogenetic information as well as format your data."),
                                        shiny::p("Please upload an MetaProteomeAnalyzer(MPA) dataset to the upper section of the
                                                 panel on the left or enter an MG-RAST ID to the lower section"),
@@ -83,9 +84,9 @@ ChordShinyAppUI <- shiny::fluidPage( shinyjs::useShinyjs(),
                                        shiny::br(),
                                        "Progress:",
                                        shiny::tags$pre(id = "progress")
-                                       
+
                       )
-                      
+
                     )))
   )
 )
