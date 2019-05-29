@@ -58,7 +58,7 @@ ChordShinyAppUI <- shiny::fluidPage( shinyjs::useShinyjs(),
                         # uiOutput("CPlot"),
                         shiny::htmlOutput("SelectedGroupName"),
                         shiny::htmlOutput("SelectedGrouptaxaName"),
-                        chorddiag::chorddiagOutput("ChordPlot", width="850px", height="1000px")#,
+                        chorddiag::chorddiagOutput("ChordPlot", width="100%", height='1000px')#,
 
                       )
                     )
