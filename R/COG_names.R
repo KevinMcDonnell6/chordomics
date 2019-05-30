@@ -1,8 +1,8 @@
 COG_names <- function(df,UniqueCOGs = "UniqueCOGs"){
   # see https://stackoverflow.com/questions/9521009/
   # loads the categories object into env; otherwise, tests wont work
-  data(categories, envir=environment())
-  data(funGroups, envir=environment())
+  #data(categories, envir=environment())
+  #data(funGroups, envir=environment())
   df <- as.data.frame(df)
 
   # ensure that only one listed per row

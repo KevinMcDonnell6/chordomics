@@ -85,9 +85,11 @@ ChordShinyAppServer <- function(input, output, session) {
       shinyjs::html("progress",logging)
       processData <- assign_taxa(processData,logging)
       colnames(processData) <- stringr::str_to_title(colnames(processData))
+      processData <- processData %>%
+        dplyr::rename("UniqueCOGs"=Cogs_by_seq) %>%
+        tidyr::separate_rows("UniqueCOGs",sep=";")
 
-      colnames(processData)[colnames(processData)=="Cogs_by_seq"]<-"COG"
-      processData <- tidyr::separate_rows(processData,"COG",sep=";")
+      #colnames(processData)[colnames(processData)=="Cogs_by_seq"]<-"COG"
 
 
       # COG Names
@@ -119,13 +121,16 @@ ChordShinyAppServer <- function(input, output, session) {
   # Reactice to hold example datasets
   exampleData <- shiny::reactiveVal()
   observeEvent(input$example,{
-    Data <- list()
-    Data[["df1"]] <- Day1
-    Data[["df2"]] <- Day3
-    Data[["df3"]] <- Day7
+    # Data <- list()
+    # Data[["df1"]] <- Day1
+    # Data[["df2"]] <- Day3
+    # Data[["df3"]] <- Day7
 
-    exampleData(Data)
-
+    exampleData(c(
+      system.file("extdata", "Day1.csv", package = "chordomics"),
+      system.file("extdata", "Day3.csv", package = "chordomics"),
+      system.file("extdata", "Day7.csv", package = "chordomics")
+    ))
   })
 
 
@@ -175,7 +180,7 @@ ChordShinyAppServer <- function(input, output, session) {
 
     if(!is.null(inFile)){
       for(i in numberOfFiles){
-        df_<- read.csv(input$files$datapath[i])
+        #df_<- read.csv(input$files$datapath[i])
         names_ <- c(names_,stringi::stri_extract_first(str = inFile$name, regex = ".*(?=\\.)"))
 
       }
@@ -197,103 +202,69 @@ ChordShinyAppServer <- function(input, output, session) {
   # Reactive to store the Data as a list
   Data <- shiny::reactive({
     shiny::req({!is.null(input$files) | !is.null(exampleData())})
-
+    if (!is.null(exampleData())){
+      files <- exampleData()
+    } else{
+      files <- c()
+      for (f in input$files$datapath){
+        files <- c(files, f)
+      }
+    }
     Data <- list(All=data.frame(stringsAsFactors = F))
-
-    if(!is.null(input$files) & is.null(exampleData())){
-
-      numberOfFiles <- length(input$files$datapath)
-
-      # Loop through the datasets, loading successive ones into a list
-      for(i in 1:numberOfFiles){
-        name_ <- paste("df",i,sep = "")
-        assign(name_, read.csv(input$files$datapath[i]))
-        Data[[name_]] <- as.data.frame(get(name_))[intersect(colnames(get(name_)),c(taxonomicRanksList,functionList))]
+    Datadf <- NA
+    numberOfFiles <- length(files)
 
 
-        # Convert NULLs to "NO COG"
-        if(!is.null(Data[[name_]]$COG_Category)){
-          Data[[name_]]$COG_Category[Data[[name_]]$COG_Category == ""] <- "No COG"
+    # Loop through the datasets, loading successive ones into a list
+    for (i in 1:numberOfFiles) {
+      name_ <- paste0("df", i)
+      tmpdf <- read.csv(files[i])
+      tmpdf <-  tmpdf %>%
+        dplyr::select(intersect(colnames(tmpdf),
+                                c(taxonomicRanksList, functionList)))
+      tmpdf$choromics_dataset <- i
+      for (thiscol in functionList) {
+        if (thiscol %in% colnames(tmpdf)) {
+          # Convert NULLs to "NO COG"
+          tmpdf[, thiscol] <- ifelse(is.null(tmpdf[, thiscol]) |
+                                       is.na(tmpdf[, thiscol]) |
+                                       tmpdf[, thiscol] == "",
+                                     "No COG",
+                                     tmpdf[, thiscol])
         }
-        # Convert NAs to "NO COG"
-        if(!is.null(Data[[name_]]$COG_Name)){
-          Data[[name_]]$COG_Name[Data[[name_]]$COG_Name == ""] <- "No COG"
+      }
+      for (thiscol in taxonomicRanksList) {
+        if (thiscol %in% colnames(tmpdf)) {
+          # Convert NULLs to "NO COG"
+          tmpdf[, thiscol] <- ifelse(is.null(tmpdf[, thiscol]) |
+                                       is.na(tmpdf[, thiscol]) |
+                                       tmpdf[, thiscol] == "",
+                                     "No taxonomy",
+                                     tmpdf[, thiscol])
         }
+      }
+      if (i == 1) {
+        Datadf <- tmpdf
+      } else {
+        tryCatch({
+          Datadf <- rbind(Datadf, tmpdf)
+        }, error = function(e) {
+          shiny::showNotification(ui = paste("Datasets of Different structure"),
+                                  duration = NULL)
+        })
+      }
+    } # end files loop
+    Data[["All"]] <- Datadf
+    for (i in 1:numberOfFiles){
+      Data[[i + 1]] <- Datadf %>% dplyr::filter(choromics_dataset == i)
 
-        # Convert NAs to "NO taxonomy"
-        Data[[name_]][,intersect(colnames(Data[[name_]]),
-                                 taxonomicRanksList)][is.na(Data[[name_]][,intersect(colnames(Data[[name_]]),
-                                                                                     taxonomicRanksList)])]<-"No taxonomy"
-        # Convert NULLs to "No taxonomy"
-        Data[[name_]][,intersect(colnames(Data[[name_]]),
-                                 taxonomicRanksList)][Data[[name_]][,intersect(colnames(Data[[name_]]),
-                                                                                     taxonomicRanksList)]==""]<-"No taxonomy"
-
-        # Create dataset a concatenation of all the files
-        if(i==1){
-          Data[["All"]] <- as.data.frame(Data[[name_]])
-        }
-        else{
-          tryCatch({
-            Data[["All"]] <- rbind(Data[["All"]], as.data.frame(Data[[name_]]))
-          }, error = function(e) {
-            shiny::showNotification(ui = paste("Datasets of Different structure"),
-                                    duration = 5)
-          })
-        }
-      }#end for loop
-      tryCatch({
-        stop(!any(functionList %in% colnames(Data[["All"]])), "columns")
-      }, error = function(e) {
-        shiny::showNotification(ui = paste("Dataset(s) missing required columns!"),
-                                duration = NULL)
-      })
-
-    }#endif statement
-
-
-    # Process example Data
-    if(!is.null(exampleData())){
-      # Data <- exampleData()
-      Data <- list(All=data.frame(stringsAsFactors = F))
-
-      numberOfFiles <- length(exampleData())
-
-      # Loop through the datasets, loading successive ones into a list
-      for(i in 1:numberOfFiles){
-        name_ <- paste("df",i,sep = "")
-        assign(name_, exampleData()[[i]])
-
-        Data[[name_]] <- as.data.frame(get(name_))[intersect(colnames(get(name_)),c(taxonomicRanksList,functionList))]
-
-        if(!is.null(Data[[name_]]$COG_Category)){
-          Data[[name_]]$COG_Category[Data[[name_]]$COG_Category == "" | is.na(Data[[name_]]$COG_Category)] <- "No COG"
-        }
-        if(!is.null(Data[[name_]]$COG_Name)){
-          Data[[name_]]$COG_Name[Data[[name_]]$COG_Name == "" | is.na(Data[[name_]]$COG_Category)] <- "No COG"
-        }
-
-
-        Data[[name_]][,intersect(colnames(Data[[name_]]),
-                                 taxonomicRanksList)][is.na(Data[[name_]][,intersect(colnames(Data[[name_]]),
-                                                                                     taxonomicRanksList)])]<-"No taxonomy"
-        Data[[name_]][,intersect(colnames(Data[[name_]]),
-                                 taxonomicRanksList)][Data[[name_]][,intersect(colnames(Data[[name_]]),
-                                                                               taxonomicRanksList)]==""]<-"No taxonomy"
-
-
-
-        # Create dataset a concatenation of all the files
-        if(i==1){
-          Data[["All"]] <- as.data.frame(Data[[name_]])
-        }
-        else{
-          Data[["All"]] <- rbind(Data[["All"]],as.data.frame(Data[[name_]]))
-        }
-      }#end for loop
-    }#endif statement
-
+    }
+    if(!any(functionList %in% colnames(Data[["All"]]))){
+      shiny::showNotification(ui = paste("Dataset(s) missing required columns!"),
+                              duration = NULL)
+    }
     return(Data)
+
   })
 
 
@@ -301,7 +272,7 @@ ChordShinyAppServer <- function(input, output, session) {
   ####################### Individual colours for functions ####################################################
 
 
-  All_fns <- shiny::reactive(names(sort(table(c(Data()[[1]]$COG_Category,"Other")),decreasing = T)))
+  All_fns <- shiny::reactive(names(sort(table(c(Data()[["All"]]$COG_Category,"Other")),decreasing = T)))
 
   # Colour holder
   Function_colour_list <- shiny::reactive({
@@ -313,7 +284,7 @@ ChordShinyAppServer <- function(input, output, session) {
 
   # Reactive to hold all taxonomic ranks in the dataset
   taxa_ranks <- shiny::reactive({
-    col_names <- colnames(Data()[[1]])
+    col_names <- colnames(Data()[["All"]])
     Ranks=c("Superkingdom","Kingdom","Phylum","Class","Order","Family","Genus","Species")
     return(intersect(col_names,Ranks))
   })
@@ -430,7 +401,6 @@ ChordShinyAppServer <- function(input, output, session) {
     # selected dataset
     d<- input$tbl2_rows_selected
     shiny::req(d)
-
     # Assign selected datasets
     table1 <- as.data.frame(Data()[[d]], stringsAsFactors = F)
 
@@ -443,9 +413,6 @@ ChordShinyAppServer <- function(input, output, session) {
     if (!taxa_ranks()[s] %in% colnames(table1)){
       stop(paste0("Misformatted data: '", s, "' not found in header of input data."))
     }
-    # if (!functionSelection()[f] %in% colnames(table1)){
-    #   stop(paste0("Misformatted data: '", f, "' not found in header of input data."))
-    # }
     # Update function and phylogeny selection
     table1[,taxa_ranks()[s]] <- as.factor(stringr::str_trim(as.character(table1[,taxa_ranks()[s]])))
 
@@ -518,7 +485,9 @@ ChordShinyAppServer <- function(input, output, session) {
       chord_table <- data.frame("functionCol" = as.factor(as.character(chord_table$functionCol)),
                                  "taxonomy"=as.factor(as.character(chord_table$taxonomy)))
     },error= function(e){
-      shiny::showNotification(ui = paste("Error in selected data please reset"),duration = 5)} )
+      shiny::showNotification(ui = paste("Error in selected data please reset"),duration = 5)
+    })
+
 
 
     # summarise the tibble
@@ -729,23 +698,27 @@ ChordShinyAppServer <- function(input, output, session) {
       }
 
       # Re-summarise after re-labelling
+      data_cols <- colnames(all_df_sums_join)[3: (2+numberOfFiles)]
       df_all <- all_df_sums_join
-      df_all$SUM <- rowSums(df_all[,c(3:(length(Data())+1))])
+      df_all$SUM <- rowSums(df_all[, data_cols])
       df_all <- df_all %>% dplyr::group_by(taxa,Predicted.Function) %>%
-        dplyr::summarise_at(dplyr::vars(colnames(df_all)[c(3:(length(Data())+2))]),sum)#+1 for SUM
+        dplyr::summarise_at(data_cols, sum)#+1 for SUM
 
       df_group_fun <- df_all %>% dplyr::group_by(Predicted.Function) %>%
-        dplyr::summarise_at(dplyr::vars(colnames(df_all)[c(3:(length(Data())+1))]),sum)
-      df_group_fun$N <- rowSums(df_group_fun[2:(length(Data()))])
+        dplyr::summarise_at(data_cols, sum)
+      df_group_fun$N <- rowSums(df_group_fun[data_cols])
       df_group_fun <- dplyr::arrange(df_group_fun,dplyr::desc(N))
 
-      df_group_tax <- df_all %>% dplyr::group_by(taxa) %>% dplyr::summarise_at(dplyr::vars(colnames(df_all)[c(3:(length(Data())+1))]),sum)
-      df_group_tax$N <- rowSums(df_group_tax[2:(length(Data()))])
+      df_group_tax <- df_all %>% dplyr::group_by(taxa) %>%
+        dplyr::summarise_at(data_cols,sum)
+      df_group_tax$N <- rowSums(df_group_tax[data_cols])
       df_group_tax <- dplyr::arrange(df_group_tax,dplyr::desc(N))
 
       Group_sum <- jsonlite::toJSON(as.list(df_group_fun))
 
-      df_all <- df_all %>% dplyr::arrange(match(taxa,df_group_tax$taxa),match(Predicted.Function,df_group_fun$Predicted.Function))
+      df_all <- df_all %>% dplyr::arrange(
+        match(taxa,df_group_tax$taxa),
+        match(Predicted.Function,df_group_fun$Predicted.Function))
 
 
 
@@ -838,11 +811,11 @@ ChordShinyAppServer <- function(input, output, session) {
       chorddiag::chorddiag(m_1,type = "bipartite",
                            groupColors = c(colour_list1,colour_list2),#substr(grDevices::rainbow(nrow(m_1)+ncol(m_1)),0,7),
                            groupnamePadding = 20,
-                           groupnameFontsize = 10,
+                           groupnameFontsize = input$fontsize,
                            # categoryNames = T,
                            categorynamePadding = 200,
                            ticklabelFontsize = 9,
-                           tickInterval = max(1,sum(mat_list$n)%/%200),
+                           tickInterval = max(1,sum(mat_list$n)%/%100),
                            margin = 400-input$margin,
                            reactor = exportJson,
                            grouptotals = Group_sum,
@@ -852,6 +825,4 @@ ChordShinyAppServer <- function(input, output, session) {
 
 
   output$ChordPlot <- chorddiag::renderChorddiag({Cplot()})
-
-
 }

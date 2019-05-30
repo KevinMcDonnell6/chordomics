@@ -1,4 +1,4 @@
-context("LCA_alg")
+context("Get_COG")
 library(chordomics)
 
 test_data <- data.frame(uniprots=c("P21514, P21515", "P41543"), other=c("other", "data"), stringsAsFactors = F)
