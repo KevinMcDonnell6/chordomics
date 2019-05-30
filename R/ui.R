@@ -22,7 +22,7 @@ ChordShinyAppUI <- shiny::fluidPage( shinyjs::useShinyjs(),
           shiny::h2("Welcome to Chordomics!"),
           shiny::p("Upload your datasets using the panel on the left."),
           shiny::p("Ensure the file types are csv format and contain headings
-                   of taxonomic rank (Superkingdom, Kingdom, Phylum, Class, Order, Family, Genus and/or Species) and function ('COG_category' and/or 'COG_Name)"),
+                   of taxonomic rank (Superkingdom, Kingdom, Phylum, Class, Order, Family, Genus and/or Species) and function ('COG_Category' and/or 'COG_Name')"),
           shiny::uiOutput("github")
         )
       )
