@@ -25,7 +25,7 @@ assign_taxa <- function(df,shinylogs){
   t3 <- t1
   df <- as.data.frame(df)
   # Add taxonomy columns to dataframe
-  cols <- colnames(alltaxa[-1])
+  cols <- colnames(ncbiLineages::alltaxa[-1])
   for(rank in  cols){
     df[,rank] <- ""
   }
@@ -48,7 +48,7 @@ assign_taxa <- function(df,shinylogs){
 
     # Merge tax_ids and taxonomy into single dataframe
     # Select lineages for possible ids
-    tempdf <- alltaxa[alltaxa$tax_id %in% ids,]
+    tempdf <- ncbiLineages::alltaxa[ncbiLineages::alltaxa$tax_id %in% ids,]
 
     # Get rid of ids not present in the dataset (containing NAs)
     tempdf <- tempdf[complete.cases(tempdf),]
