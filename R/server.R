@@ -94,7 +94,7 @@ ChordShinyAppServer <- function(input, output, session) {
 
       # COG Names
       shinyjs::html("progress","\nAdding names",add = T)
-      processData <- COG_names(processData,"UniqueCOGs")
+      processData <- COG_names(processData,"COG")
       processedData(processData)
       # save data
       shinyjs::html("progress","\nSaving file",add = T)
