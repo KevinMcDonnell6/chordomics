@@ -86,8 +86,8 @@ ChordShinyAppServer <- function(input, output, session) {
       processData <- assign_taxa(processData,logging)
       colnames(processData) <- stringr::str_to_title(colnames(processData))
       processData <- processData %>%
-        dplyr::rename("COG"=Cogs_by_seq) %>%
-        tidyr::separate_rows("COG",sep=";")
+        dplyr::rename("UniqueCOGs"=Cogs_by_seq) %>%
+        tidyr::separate_rows("UniqueCOGs",sep=";")
 
       #colnames(processData)[colnames(processData)=="Cogs_by_seq"]<-"COG"
 
