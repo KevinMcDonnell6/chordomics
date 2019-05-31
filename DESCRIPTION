@@ -23,8 +23,10 @@ Imports:
     chorddiag,
     magrittr,
     stats, 
-    utils
+    utils,
+    ncbiLineages
 Remotes: KevinMcDonnell6/chorddiag
+         KevinMcDonnell6/ncbiLineages
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
