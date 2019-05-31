@@ -25,7 +25,7 @@ Imports:
     stats, 
     utils,
     ncbiLineages
-Remotes: KevinMcDonnell6/chorddiag
+Remotes: KevinMcDonnell6/chorddiag,
          KevinMcDonnell6/ncbiLineages
 License: MIT + file LICENSE
 Encoding: UTF-8
