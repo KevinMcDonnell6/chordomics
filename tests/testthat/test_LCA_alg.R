@@ -1,5 +1,6 @@
 context("LCA_alg")
 library(chordomics)
+library(ncbiLineages)
 #processData <-  processMGRAST("mgm4762935.3", DATA_DIR, output, e=environment())
 #dput(processData[1:6,1:3])
 test_input <-
@@ -21,6 +22,6 @@ test_input <-
 
 test_that("Test assign_taxa", {
   expect_equal(c("Euryarchaeota", "Euryarchaeota", "", "Chloroflexi", "", ""),
-               chordomics:::assign_taxa(df = test_input)$phylum)
+               chordomics:::assign_taxa(df = test_input,shinylogs = NULL)$phylum)
 })
 

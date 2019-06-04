@@ -19,7 +19,7 @@ LCA_alg <- function(df){
 }
 
 
-assign_taxa <- function(df,shinylogs){
+assign_taxa <- function(df,shinylogs=NULL){
   t1 <- Sys.time()
   # for saving on printing time
   t3 <- t1
@@ -40,7 +40,10 @@ assign_taxa <- function(df,shinylogs){
     # update progress bar every 10 seconds
     if (Sys.time() - t3 > 10){
       setTxtProgressBar(pb,i)
-      shinyjs::html(id= "progress",paste0(shinylogs,"\n",format(round((i/len)*100,digits = 2),nsmall = 2),"%"),add = F)
+      if(!is.null(shinylogs)){
+        shinyjs::html(id= "progress",paste0(shinylogs,"\n",format(round((i/len)*100,digits = 2),nsmall = 2),"%"),add = F)
+
+      }
       t3 <- Sys.time()
     }
     #Create vector of tax_ids
