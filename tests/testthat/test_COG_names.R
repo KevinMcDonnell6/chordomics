@@ -16,8 +16,9 @@ results <- structure(
     Uniprot = c("P21514, P21515", "P41543"),
     AllCOGs = c("COG2200 COG2771 COG3124",  ""),
     UniqueCOGs = c("COG2200", NA),
-    COG_Category = c("T", NA),
-    COG_Name = c("EAL domain, c-di-GMP-specific phosphodiesterase class I (or its enzymatically inactive variant)", NA)),
+    Code = c("T", NA),
+    COG_Name = c("EAL domain, c-di-GMP-specific phosphodiesterase class I (or its enzymatically inactive variant)", NA),
+    COG_Category = c("Signal transduction mechanisms",NA)),
   row.names = c(NA, -2L),
   class = "data.frame")
 test_that("Check function fetching list of COGs for uniprot IDs", {

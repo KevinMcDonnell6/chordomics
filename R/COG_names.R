@@ -15,9 +15,9 @@ COG_names <- function(df,UniqueCOGs = "UniqueCOGs"){
   }
 
   df <- dplyr::left_join(df, categories, by=c(UniqueCOGs = "COG"))
-  df <- dplyr::rename(df, COG_Category = "func", COG_Name = "name")
-  # df <- dplyr::left_join(df, funGroups, by= (Code))
-  # df <- dplyr::rename(df, COG_Category = "Code", COG_Name = "name")
+  df <- dplyr::rename(df, Code = "func", COG_Name = "name")
+  df <- dplyr::left_join(df, funGroups, by= "Code")
+  df <- dplyr::rename(df, COG_Category = "Name")
 
   # for(i in 1:len){
   #   # print(df$Group)
