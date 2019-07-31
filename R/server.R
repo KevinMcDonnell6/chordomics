@@ -60,8 +60,8 @@ ChordShinyAppServer <- function(input, output, session) {
       #run funtion process MPA
       processData <- processMPA(input$rawMPAfile$datapath)
       processedData(processData)
-      shinyjs::html("progress", "\nSaving file",add = T)
-      shinyjs::html("progress", paste0("\nResults in ",DATA_DIR), add = T)
+      shinyjs::html("progress", "\nFile ready to download!",add = T)
+      # shinyjs::html("progress", paste0("\nResults in ",DATA_DIR), add = T)
 
       New_Name <- gsub(pattern = "(.*)(\\..*)",replacement = "\\1",x=input$rawMPAfile$name)#"(.*?)")
       new_file_name <- paste0(New_Name,"_clean.csv")
@@ -70,7 +70,8 @@ ChordShinyAppServer <- function(input, output, session) {
         shiny::downloadButton('downloadData', 'Download')
       })
 
-      shinyjs::html("progress","\nDone",add = T)
+      # shinyjs::html("progress","\nDone",add = T)
+      shinyjs::html("progress","\nClick the 'Download' button on the side panel.",add = T)
 
     }else if(input$MGMid != ""){
 
@@ -98,14 +99,15 @@ ChordShinyAppServer <- function(input, output, session) {
       processData <- COG_names(processData,"COG")
       processedData(processData)
       # save data
-      shinyjs::html("progress","\nSaving file",add = T)
+      shinyjs::html("progress","\nFile ready to download!",add = T)
       New_Name <- input$MGMid
       new_file_name <- paste0(New_Name,"_clean.csv")
       output$thedownloadbutton <- shiny::renderUI({
         shiny::downloadButton('downloadData', 'Download')
       })
       #write.csv(processData,file.path(DATA_DIR,paste0(New_Name,"_clean.csv")))
-      shinyjs::html("progress","\nDone",add = T)
+      # shinyjs::html("progress","\nDone",add = T)
+      shinyjs::html("progress","\nClick the 'Download' button on the side panel.",add = T)
 
         },
       error = function(e){
