@@ -3,7 +3,8 @@ ChordShinyAppUI <- shiny::fluidPage( shinyjs::useShinyjs(),
                                      .shiny-notification{position:fixed;
                                      top: calc(50%);;
                                      left: calc(50%);;
-                                     }")),
+                                     }
+                                     hr {border-top: 1px solid #808080;}")),
   # Application title
   # titlePanel("CircosPro"),
   shiny::tabsetPanel(
@@ -68,25 +69,63 @@ ChordShinyAppUI <- shiny::fluidPage( shinyjs::useShinyjs(),
                       )
                     )
     ),
-    shiny::tabPanel("3. Data Processing",
+    shiny::tabPanel("3. Metaproteomics Data Processing",
                     shiny::fluidRow( shiny::sidebarLayout(
                       shiny::sidebarPanel(
                         shiny::fileInput("rawMPAfile",
                                          label="Upload MPA CSVs here",
                                          multiple = F),
-                        shiny::textInput("MGMid","MG-RAST Identification",placeholder = "mgm4491407.3"),
+                        # shiny::textInput("MGMid","MG-RAST Identification",placeholder = "mgm4491407.3"),
                         shiny::actionButton("preparedata", "Prepare Data"),
                         shiny::uiOutput("thedownloadbutton")
                       ),
 
                       shiny::mainPanel(shiny::verbatimTextOutput("Status"),
-                                       shiny::h2("Chordomics Data Preprocessing"),
+                                       shiny::h2("Metaproteomics Data Preprocessing"),
                                        shiny::br(),
                                        shiny::p("Before data can be explored using chordomics it must be presented in the correct format.
                                                 Use this tool to get both functional (COG) and phylogenetic information as well as format your data."),
                                        shiny::p("Please upload an MetaProteomeAnalyzer(MPA) dataset to the upper section of the
-                                                panel on the left or enter an MG-RAST ID to the lower section"),
-                                       shiny::p("Once the dataset/ID is entered press Prepare Data"),
+                                                panel on the left"),
+                                       shiny::p("Once the dataset is entered press Prepare Data"),
+                                       shiny::br(),
+                                       "Progress:",
+                                       shiny::tags$pre(id = "progress")#,
+                                       #shiny::HTML("<p style='color:lightgrey'>try mgm4762935.3</p>")
+
+                      )
+
+                    ))),
+    shiny::tabPanel("4. MG-RAST Data Processing",
+                    shiny::fluidRow( shiny::sidebarLayout(
+                      shiny::sidebarPanel(
+                        # shiny::fileInput("rawMPAfile",
+                        #                  label="Upload MPA CSVs here",
+                        #                  multiple = F),
+                        shiny::h2("Public Repository"),
+                        shiny::textInput("MGMid","MG-RAST Identification",placeholder = "mgm4491407.3"),
+                        shiny::br(),
+                        shiny::hr(),
+                        shiny::h2("Private Repository"),
+                        shiny::fileInput("MGRASTcogfile",
+                                         label="Upload MG-RAST COG file here",
+                                         multiple = F),
+                        shiny::fileInput("MGRASTtaxfile",
+                                         label="Upload MG-RAST RefSeq file here",
+                                         multiple = F),
+                        shiny::hr(),
+                        shiny::actionButton("preparedata", "Prepare Data"),
+                        shiny::uiOutput("thedownloadbutton")
+                      ),
+
+                      shiny::mainPanel(shiny::verbatimTextOutput("Status"),
+                                       shiny::h2("Metagenomics/Metatranscriptomics Data Preprocessing"),
+                                       shiny::br(),
+                                       shiny::p("Before data can be explored using chordomics it must be presented in the correct format.
+                                                Use this tool to get both functional (COG) and phylogenetic information as well as format your data."),
+                                       shiny::p("Please enter an MG-RAST ID to the upper section of the
+                                                panel on the left or upload the COG functional file and RefSeq phylogeny file from your private repository to the lower section"),
+                                       shiny::p("Once the ID is entered/datasets are uploaded press Prepare Data"),
                                        shiny::br(),
                                        "Progress:",
                                        shiny::tags$pre(id = "progress")#,
