@@ -102,7 +102,7 @@ ChordShinyAppServer <- function(input, output, session) {
       shinyjs::html("progress","\nFile ready to download!",add = T)
       New_Name <- input$MGMid
       new_file_name <- paste0(New_Name,"_clean.csv")
-      output$thedownloadbutton <- shiny::renderUI({
+      output$thedownloadbuttonMGRAST <- shiny::renderUI({
         shiny::downloadButton('downloadData', 'Download')
       })
       #write.csv(processData,file.path(DATA_DIR,paste0(New_Name,"_clean.csv")))

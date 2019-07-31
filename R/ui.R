@@ -115,11 +115,10 @@ ChordShinyAppUI <- shiny::fluidPage( shinyjs::useShinyjs(),
                                          multiple = F),
                         shiny::hr(),
                         shiny::actionButton("preparedata", "Prepare Data"),
-                        shiny::uiOutput("thedownloadbutton")
+                        shiny::uiOutput("thedownloadbuttonMGRAST")
                       ),
 
-                      shiny::mainPanel(shiny::verbatimTextOutput("Status"),
-                                       shiny::h2("Metagenomics/Metatranscriptomics Data Preprocessing"),
+                      shiny::mainPanel(shiny::h2("Metagenomics/Metatranscriptomics Data Preprocessing"),
                                        shiny::br(),
                                        shiny::p("Before data can be explored using chordomics it must be presented in the correct format.
                                                 Use this tool to get both functional (COG) and phylogenetic information as well as format your data."),
