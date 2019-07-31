@@ -1,5 +1,6 @@
 #' @importFrom magrittr "%>%"
 ChordShinyAppServer <- function(input, output, session) {
+    options(shiny.maxRequestSize=10000*1024^2)
 
     url <- shiny::a("GitHub",href="https://github.com/KevinMcDonnell6/chordomics")
     output$github <- renderUI({shiny::tagList("For more information visit us on ",url)})
