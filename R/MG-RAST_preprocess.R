@@ -38,7 +38,7 @@ processMGRAST <- function(ID, TMP_DIR, output,e = environment()){
     download.file(url=full_annotation_path, destfile = ontology_dest_file)
   }
   # if we have a file less then 200b, its probably empty.
-  if (file.info(ontology_dest_file)$size < 200){stop("Ontology File Empty!")}
+  if (file.info(ontology_dest_file)$size < 200){stop("MG-RAST Ontology File Empty!")}
 
 
 
