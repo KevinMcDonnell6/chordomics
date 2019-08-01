@@ -73,47 +73,126 @@ ChordShinyAppServer <- function(input, output, session) {
       # shinyjs::html("progress","\nDone",add = T)
       shinyjs::html("progress","\nClick the 'Download' button on the side panel.",add = T)
 
-    }else if(input$MGMid != ""){
+    }
+      # else if(input$MGMid != ""){
+    #
+    #   # run process MG-rast
+    #   tryCatch(
+    #     {
+    #
+    #   logging <- ("")
+    #   processData <-  processMGRAST(input$MGMid,DATA_DIR, output, e=environment())
+    #
+    #   # assign taxa / LCA
+    #   logging <- paste0(logging,"\nAssigning LCA...")
+    #   shinyjs::html("progress",logging)
+    #   processData <- assign_taxa(processData,logging)
+    #   colnames(processData) <- stringr::str_to_title(colnames(processData))
+    #   processData <- processData %>%
+    #     dplyr::rename("UniqueCOGs"=Cogs_by_seq) %>%
+    #     tidyr::separate_rows("UniqueCOGs",sep=";")
+    #
+    #   #colnames(processData)[colnames(processData)=="Cogs_by_seq"]<-"COG"
+    #
+    #
+    #   # COG Names
+    #   shinyjs::html("progress","\nAdding names",add = T)
+    #   processData <- COG_names(processData,"COG")
+    #   processedData(processData)
+    #   # save data
+    #   shinyjs::html("progress","\nFile ready to download!",add = T)
+    #   New_Name <- input$MGMid
+    #   new_file_name <- paste0(New_Name,"_clean.csv")
+    #   output$thedownloadbuttonMGRAST <- shiny::renderUI({
+    #     shiny::downloadButton('downloadData', 'Download')
+    #   })
+    #   #write.csv(processData,file.path(DATA_DIR,paste0(New_Name,"_clean.csv")))
+    #   # shinyjs::html("progress","\nDone",add = T)
+    #   shinyjs::html("progress","\nClick the 'Download' button on the side panel.",add = T)
+    #
+    #     },
+    #   error = function(e){
+    #     shiny::showNotification(ui = paste("Possible network error, please try again"),duration = 5)
+    #     print("try again network error")
+    #     print(e)})
+    #
+    # }
+    else{
+      #prompt user to enter something
+      shiny::showNotification(ui = paste("Upload an MPA csv or select an MG-Rast dataset"),duration = 5)
+    }
+  })
+
+
+  shiny::observeEvent(input$preparedataMGRAST,{
+    print("in function")
+    # create directory if it doesn't exist
+    DATA_DIR <- file.path(path.expand("~"),"chordomics")
+    if(!dir.exists(DATA_DIR)){
+      dir.create(DATA_DIR)
+    }
+
+    # check mpa file or mg-rast id
+    # if(!is.null(input$rawMPAfile)){
+    #
+    #   #run funtion process MPA
+    #   processData <- processMPA(input$rawMPAfile$datapath)
+    #   processedData(processData)
+    #   shinyjs::html("progress", "\nFile ready to download!",add = T)
+    #   # shinyjs::html("progress", paste0("\nResults in ",DATA_DIR), add = T)
+    #
+    #   New_Name <- gsub(pattern = "(.*)(\\..*)",replacement = "\\1",x=input$rawMPAfile$name)#"(.*?)")
+    #   new_file_name <- paste0(New_Name,"_clean.csv")
+    #   # write.csv(processedData,file.path(DATA_DIR,paste0(New_Name,"_clean.csv")))
+    #   output$thedownloadbutton <- shiny::renderUI({
+    #     shiny::downloadButton('downloadData', 'Download')
+    #   })
+    #
+    #   # shinyjs::html("progress","\nDone",add = T)
+    #   shinyjs::html("progress","\nClick the 'Download' button on the side panel.",add = T)
+    #
+    # }else
+      if(input$MGMid != ""){
 
       # run process MG-rast
       tryCatch(
         {
 
-      logging <- ("")
-      processData <-  processMGRAST(input$MGMid,DATA_DIR, output, e=environment())
+          logging <- ("")
+          processData <-  processMGRAST(input$MGMid,DATA_DIR, output, e=environment())
 
-      # assign taxa / LCA
-      logging <- paste0(logging,"\nAssigning LCA...")
-      shinyjs::html("progress",logging)
-      processData <- assign_taxa(processData,logging)
-      colnames(processData) <- stringr::str_to_title(colnames(processData))
-      processData <- processData %>%
-        dplyr::rename("UniqueCOGs"=Cogs_by_seq) %>%
-        tidyr::separate_rows("UniqueCOGs",sep=";")
+          # assign taxa / LCA
+          logging <- paste0(logging,"\nAssigning LCA...")
+          shinyjs::html("progressMGRAST",logging)
+          processData <- assign_taxa(processData,logging)
+          colnames(processData) <- stringr::str_to_title(colnames(processData))
+          processData <- processData %>%
+            dplyr::rename("UniqueCOGs"=Cogs_by_seq) %>%
+            tidyr::separate_rows("UniqueCOGs",sep=";")
 
-      #colnames(processData)[colnames(processData)=="Cogs_by_seq"]<-"COG"
+          #colnames(processData)[colnames(processData)=="Cogs_by_seq"]<-"COG"
 
 
-      # COG Names
-      shinyjs::html("progress","\nAdding names",add = T)
-      processData <- COG_names(processData,"COG")
-      processedData(processData)
-      # save data
-      shinyjs::html("progress","\nFile ready to download!",add = T)
-      New_Name <- input$MGMid
-      new_file_name <- paste0(New_Name,"_clean.csv")
-      output$thedownloadbuttonMGRAST <- shiny::renderUI({
-        shiny::downloadButton('downloadData', 'Download')
-      })
-      #write.csv(processData,file.path(DATA_DIR,paste0(New_Name,"_clean.csv")))
-      # shinyjs::html("progress","\nDone",add = T)
-      shinyjs::html("progress","\nClick the 'Download' button on the side panel.",add = T)
+          # COG Names
+          shinyjs::html("progressMGRAST","\nAdding names",add = T)
+          processData <- COG_names(processData,"COG")
+          processedData(processData)
+          # save data
+          shinyjs::html("progressMGRAST","\nFile ready to download!",add = T)
+          New_Name <- input$MGMid
+          new_file_name <- paste0(New_Name,"_clean.csv")
+          output$thedownloadbuttonMGRAST <- shiny::renderUI({
+            shiny::downloadButton('downloadData', 'Download')
+          })
+          #write.csv(processData,file.path(DATA_DIR,paste0(New_Name,"_clean.csv")))
+          # shinyjs::html("progressMGRAST","\nDone",add = T)
+          shinyjs::html("progressMGRAST","\nClick the 'Download' button on the side panel.",add = T)
 
         },
-      error = function(e){
-        shiny::showNotification(ui = paste("Possible network error, please try again"),duration = 5)
-        print("try again network error")
-        print(e)})
+        error = function(e){
+          shiny::showNotification(ui = paste("Possible network error, please try again"),duration = 5)
+          print("try again network error")
+          print(e)})
 
     }else{
       #prompt user to enter something

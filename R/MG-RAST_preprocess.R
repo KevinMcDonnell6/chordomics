@@ -13,7 +13,7 @@ processMGRAST <- function(ID, TMP_DIR, output,e = environment()){
   THIS_TMP_DIR <- file.path(TMP_DIR, ID)
   taxlevel_for_matching <- "species"
   logging<-paste(logging,"Creating folder ",  THIS_TMP_DIR,"\n")
-  shinyjs::html("progress",logging)
+  shinyjs::html("progressMGRAST",logging)
   # make a place to download our results, with a subdir for each new dataset
   if(!exists(THIS_TMP_DIR)){
     dir.create(THIS_TMP_DIR)
@@ -30,7 +30,7 @@ processMGRAST <- function(ID, TMP_DIR, output,e = environment()){
     logging<-paste(logging,"Downloading from",  full_annotation_path)
     logging<-paste(logging,"\nThis can take a while, depending on how large the dataset is")
     # output$Status<-renderPrint(logging)
-    shinyjs::html("progress",logging)
+    shinyjs::html("progressMGRAST",logging)
     # shiny::showNotification(paste("Downloading from",  full_annotation_path))
     # shiny::showNotification("This can take a while, depending on how large the dataset is")
 
@@ -49,7 +49,7 @@ processMGRAST <- function(ID, TMP_DIR, output,e = environment()){
   if (!file.exists(organism_dest_file)){
     logging <- paste(logging,"\nDownloading from",  full_organism_path)
     logging <- paste(logging,"\nThis can take a while, depending on how large the dataset is")
-    shinyjs::html("progress",logging)
+    shinyjs::html("progressMGRAST",logging)
     download.file(url=full_organism_path, destfile = organism_dest_file)
   }
   if (file.info(organism_dest_file)$size < 200){stop("Organism File Empty!")}
@@ -65,7 +65,7 @@ processMGRAST <- function(ID, TMP_DIR, output,e = environment()){
 
     logging <- paste(logging,"\nDownloading from",  raw_input_path)
     logging <- paste(logging,"\nThis can take a while, depending on how large the dataset is")
-    shinyjs::html("progress",logging)
+    shinyjs::html("progressMGRAST",logging)
     download.file(url=raw_input_path, destfile = input_dest_file)
   }
 
@@ -84,7 +84,7 @@ processMGRAST <- function(ID, TMP_DIR, output,e = environment()){
   if (!file.exists(file.path(taxdump_dest, "taxdmp.zip"))){
     logging <- paste(logging,"\nDownload NCBI taxonomy names database")
     logging <- paste(logging,"\nMG-RAST doesn't include taxids, so we have to try to match them up")
-    shinyjs::html("progress",logging)
+    shinyjs::html("progressMGRAST",logging)
     download.file(url = "ftp://ftp.ncbi.nih.gov/pub/taxonomy/taxdmp.zip",
                   destfile = file.path(taxdump_dest, "taxdmp.zip"))
     unzip(file.path(taxdump_dest, "taxdmp.zip"), exdir = taxdmp)
@@ -92,7 +92,7 @@ processMGRAST <- function(ID, TMP_DIR, output,e = environment()){
   simple_tax_names <- file.path(taxdump_dest, "simple_names.tab")
   if (!file.exists(simple_tax_names)){
     logging <- paste(logging,"\ncleaning up taxonomy names file to make matching easier down the road")
-    shinyjs::html("progress",logging)
+    shinyjs::html("progressMGRAST",logging)
     tax_raw<- data.table::fread(file.path(taxdmp, "names.dmp"), quote = "")
     tax_raw$all <- apply( tax_raw[ , c(3,5,7) ] , 1, paste , collapse = "-" )
     tax <- tax_raw[, c(1, 9)]
@@ -136,9 +136,9 @@ processMGRAST <- function(ID, TMP_DIR, output,e = environment()){
 
   if (taxlevel_for_matching == "species"){
     logging <- paste(logging,"\nmatching scientific name at the species level to taxid; this can take some time")
-    shinyjs::html("progress",logging)
+    shinyjs::html("progressMGRAST",logging)
     for (i in 1:length(unique_org_names) ){
-      if (i %% 5 ==0){shinyjs::html("progress", paste0(logging, paste("\nmaching taxid to organism", i , "of", length(unique_org_names) )))}
+      if (i %% 5 ==0){shinyjs::html("progressMGRAST", paste0(logging, paste("\nmaching taxid to organism", i , "of", length(unique_org_names) )))}
       query  <- unique_org_names[i]
       # This is not fantastic but we are going to just take the first 20 for later LCA analysis
       these_names <- tax$V1[grepl(query, tax$short, fixed=T)]
@@ -153,7 +153,7 @@ processMGRAST <- function(ID, TMP_DIR, output,e = environment()){
     simple_org_names <- unique(gsub("(.*?)\\s.*", "\\1", unique_org_names))
     for (i in 1:length(simple_org_names) ){
       if (i %% 50 ==0){
-        shinyjs::html("progress", paste0(logging, paste("\nmaching taxid at genus level to organism", i , "of", length(simple_org_names) )),add = F)}
+        shinyjs::html("progressMGRAST", paste0(logging, paste("\nmaching taxid at genus level to organism", i , "of", length(simple_org_names) )),add = F)}
 
       query <- simple_org_names[i]
       #names <- tax$V1[grepl(query, tax$all, fixed=T)]
@@ -162,7 +162,7 @@ processMGRAST <- function(ID, TMP_DIR, output,e = environment()){
     }
   }
   logging <- paste0(logging,"\ncomplete \nmerging data")
-  shinyjs::html("progress",logging)
+  shinyjs::html("progressMGRAST",logging)
   #  we need to get rid of the bit they put after the seqname
   ont$id <- gsub("(.*)\\|(.*)\\|.*", "\\1|\\2", ont$id)
   org$id <- gsub("(.*)\\|(.*)\\|.*", "\\1|\\2", org$id)
@@ -213,7 +213,7 @@ processMGRAST <- function(ID, TMP_DIR, output,e = environment()){
 
   ###########################################  make a summary file #######################
   logging <- paste0(logging,"\nprinting summary file")
-  shinyjs::html("progress",logging)
+  shinyjs::html("progressMGRAST",logging)
 
   summary_text<- c("# Summary of MG-RAST merging")
   lines_of_input <- readLines(input_dest_file)
@@ -233,7 +233,7 @@ processMGRAST <- function(ID, TMP_DIR, output,e = environment()){
   logging <- paste0(logging, "\nFinished getting data")
 
   assign(x="logging", logging,envir = e)
-  shinyjs::html("progress",logging)
+  shinyjs::html("progressMGRAST",logging)
 
   return(combined_all)
 }

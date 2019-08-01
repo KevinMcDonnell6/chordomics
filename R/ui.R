@@ -114,7 +114,7 @@ ChordShinyAppUI <- shiny::fluidPage( shinyjs::useShinyjs(),
                                          label="Upload MG-RAST RefSeq file here",
                                          multiple = F),
                         shiny::hr(),
-                        shiny::actionButton("preparedata", "Prepare Data"),
+                        shiny::actionButton("preparedataMGRAST", "Prepare Data"),
                         shiny::uiOutput("thedownloadbuttonMGRAST")
                       ),
 
@@ -127,7 +127,7 @@ ChordShinyAppUI <- shiny::fluidPage( shinyjs::useShinyjs(),
                                        shiny::p("Once the ID is entered/datasets are uploaded press Prepare Data"),
                                        shiny::br(),
                                        "Progress:",
-                                       shiny::tags$pre(id = "progress")#,
+                                       shiny::tags$pre(id = "progressMGRAST")#,
                                        #shiny::HTML("<p style='color:lightgrey'>try mgm4762935.3</p>")
 
                       )
