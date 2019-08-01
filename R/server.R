@@ -160,7 +160,9 @@ ChordShinyAppServer <- function(input, output, session) {
         {
 
           logging <- ("")
-          processData <-  processMGRAST(input$MGMid,DATA_DIR, output, e=environment())
+          processData <-  processMGRAST(ID = input$MGMid,
+                                        TMP_DIR = DATA_DIR,
+                                        e=environment())
 
           # assign taxa / LCA
           logging <- paste0(logging,"\nAssigning LCA...")
@@ -194,6 +196,51 @@ ChordShinyAppServer <- function(input, output, session) {
           shiny::showNotification(ui = paste("Possible network error, please try again"),duration = 5)
           print("try again network error")
           print(e)})
+
+    }else if(!is.null(input$MGRASTcogfile) & !is.null(input$MGRASTtaxfile)){
+      # run process MG-rast
+      tryCatch(
+        {
+
+          logging <- ("")
+          processData <-  processMGRAST(privateCOGfile = input$MGRASTcogfile,
+                                        privateRefSeqfile = input$MGRASTtaxfile,
+                                        TMP_DIR = DATA_DIR,
+                                        e=environment())
+
+          # assign taxa / LCA
+          logging <- paste0(logging,"\nAssigning LCA...")
+          shinyjs::html("progressMGRAST",logging)
+          processData <- assign_taxa(processData,logging)
+          colnames(processData) <- stringr::str_to_title(colnames(processData))
+          processData <- processData %>%
+            dplyr::rename("UniqueCOGs"=Cogs_by_seq) %>%
+            tidyr::separate_rows("UniqueCOGs",sep=";")
+
+          #colnames(processData)[colnames(processData)=="Cogs_by_seq"]<-"COG"
+
+
+          # COG Names
+          shinyjs::html("progressMGRAST","\nAdding names",add = T)
+          processData <- COG_names(processData,"COG")
+          processedDataMGRAST(processData)
+          # save data
+          shinyjs::html("progressMGRAST","\nFile ready to download!",add = T)
+          New_Name <- input$MGMid
+          new_file_name <- paste0(New_Name,"_clean.csv")
+          output$thedownloadbuttonMGRAST <- shiny::renderUI({
+            shiny::downloadButton('downloadDataMGRAST', 'Download')
+          })
+          #write.csv(processData,file.path(DATA_DIR,paste0(New_Name,"_clean.csv")))
+          # shinyjs::html("progressMGRAST","\nDone",add = T)
+          shinyjs::html("progressMGRAST","\nClick the 'Download' button on the side panel.",add = T)
+
+        },
+        error = function(e){
+          shiny::showNotification(ui = paste("Possible network error, please try again"),duration = 5)
+          print("try again network error")
+          print(e)})
+
 
     }else{
       #prompt user to enter something

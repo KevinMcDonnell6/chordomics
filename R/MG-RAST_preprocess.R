@@ -1,73 +1,81 @@
 #' @importFrom magrittr "%>%"
-processMGRAST <- function(ID, TMP_DIR, output,e = environment()){
+processMGRAST <- function(ID = NULL,
+                          TMP_DIR,
+                          privateCOGfile = NULL,
+                          privateRefSeqfile = NULL,
+                            # private
+                          e = environment()){
   logging<-("")
 
 
+if(!is.null(ID)){
 
-  # for example,
-  ORG_DB <- "RefSeq"
-  ONT_DB <- "COG"
-  # ID <- "mgm4762935.3"
-  EVALUE <- 10
-  #TMP_DIR <- file.path(".","tmp")
-  THIS_TMP_DIR <- file.path(TMP_DIR, ID)
-  taxlevel_for_matching <- "species"
-  logging<-paste(logging,"Creating folder ",  THIS_TMP_DIR,"\n")
-  shinyjs::html("progressMGRAST",logging)
-  # make a place to download our results, with a subdir for each new dataset
-  if(!exists(THIS_TMP_DIR)){
-    dir.create(THIS_TMP_DIR)
-  }
+      # for example,
+      ORG_DB <- "RefSeq"
+      ONT_DB <- "COG"
+      # ID <- "mgm4762935.3"
+      EVALUE <- 10
+      #TMP_DIR <- file.path(".","tmp")
+      THIS_TMP_DIR <- file.path(TMP_DIR, ID)
+      taxlevel_for_matching <- "species"
+      logging<-paste(logging,"Creating folder ",  THIS_TMP_DIR,"\n")
+      shinyjs::html("progressMGRAST",logging)
+      # make a place to download our results, with a subdir for each new dataset
+      if(!exists(THIS_TMP_DIR)){
+        dir.create(THIS_TMP_DIR)
+      }
 
-  ANNO_BASE <- "http://api.metagenomics.anl.gov/annotation/sequence/"
+      ANNO_BASE <- "http://api.metagenomics.anl.gov/annotation/sequence/"
 
-  # get the Annotation file
-  ANNO_PARAMS <- paste0(ID, "?evalue=", EVALUE, "&type=ontology&source=", ONT_DB)
+      # get the Annotation file
+      ANNO_PARAMS <- paste0(ID, "?evalue=", EVALUE, "&type=ontology&source=", ONT_DB)
 
-  full_annotation_path <- paste0(ANNO_BASE, ANNO_PARAMS)
-  ontology_dest_file <- file.path(THIS_TMP_DIR, "ontology")
-  if (!file.exists(ontology_dest_file)){
-    logging<-paste(logging,"Downloading from",  full_annotation_path)
-    logging<-paste(logging,"\nThis can take a while, depending on how large the dataset is")
-    # output$Status<-renderPrint(logging)
-    shinyjs::html("progressMGRAST",logging)
-    # shiny::showNotification(paste("Downloading from",  full_annotation_path))
-    # shiny::showNotification("This can take a while, depending on how large the dataset is")
-
-
-    download.file(url=full_annotation_path, destfile = ontology_dest_file)
-  }
-  # if we have a file less then 200b, its probably empty.
-  if (file.info(ontology_dest_file)$size < 200){stop("MG-RAST Ontology File Empty!")}
+      full_annotation_path <- paste0(ANNO_BASE, ANNO_PARAMS)
+      ontology_dest_file <- file.path(THIS_TMP_DIR, "ontology")
+      if (!file.exists(ontology_dest_file)){
+        logging<-paste(logging,"Downloading from",  full_annotation_path)
+        logging<-paste(logging,"\nThis can take a while, depending on how large the dataset is")
+        # output$Status<-renderPrint(logging)
+        shinyjs::html("progressMGRAST",logging)
+        # shiny::showNotification(paste("Downloading from",  full_annotation_path))
+        # shiny::showNotification("This can take a while, depending on how large the dataset is")
 
 
+        download.file(url=full_annotation_path, destfile = ontology_dest_file)
+      }
+      # if we have a file less then 200b, its probably empty.
+      if (file.info(ontology_dest_file)$size < 200){stop("MG-RAST Ontology File Empty!")}
 
-  # get the Tax file
-  ORG_PARAMS <- paste0(ID, "?evalue=", EVALUE, "&type=organism&source=", ORG_DB)
-  full_organism_path <- paste0(ANNO_BASE, ORG_PARAMS)
-  organism_dest_file <- file.path(THIS_TMP_DIR, "organism")
-  if (!file.exists(organism_dest_file)){
-    logging <- paste(logging,"\nDownloading from",  full_organism_path)
-    logging <- paste(logging,"\nThis can take a while, depending on how large the dataset is")
-    shinyjs::html("progressMGRAST",logging)
-    download.file(url=full_organism_path, destfile = organism_dest_file)
-  }
-  if (file.info(organism_dest_file)$size < 200){stop("Organism File Empty!")}
 
-  # Get the input data to match up the sequences
 
-  DOWNLOAD_BASE <- "https://api.metagenomics.anl.gov/download/"
-  # see a call like this to find the stage: http://api.metagenomics.anl.gov/download/history/mgm4447943.3
-  ORIGINAL_FILE_STAGE = "050.1"
-  raw_input_path <- paste0(DOWNLOAD_BASE, ID, "?file=", ORIGINAL_FILE_STAGE)
-  input_dest_file <- file.path(THIS_TMP_DIR, "input_data")
-  if (!file.exists(input_dest_file)){
+      # get the Tax file
+      ORG_PARAMS <- paste0(ID, "?evalue=", EVALUE, "&type=organism&source=", ORG_DB)
+      full_organism_path <- paste0(ANNO_BASE, ORG_PARAMS)
+      organism_dest_file <- file.path(THIS_TMP_DIR, "organism")
+      if (!file.exists(organism_dest_file)){
+        logging <- paste(logging,"\nDownloading from",  full_organism_path)
+        logging <- paste(logging,"\nThis can take a while, depending on how large the dataset is")
+        shinyjs::html("progressMGRAST",logging)
+        download.file(url=full_organism_path, destfile = organism_dest_file)
+      }
+      if (file.info(organism_dest_file)$size < 200){stop("Organism File Empty!")}
 
-    logging <- paste(logging,"\nDownloading from",  raw_input_path)
-    logging <- paste(logging,"\nThis can take a while, depending on how large the dataset is")
-    shinyjs::html("progressMGRAST",logging)
-    download.file(url=raw_input_path, destfile = input_dest_file)
-  }
+      # Get the input data to match up the sequences
+
+      DOWNLOAD_BASE <- "https://api.metagenomics.anl.gov/download/"
+      # see a call like this to find the stage: http://api.metagenomics.anl.gov/download/history/mgm4447943.3
+      ORIGINAL_FILE_STAGE = "050.1"
+      raw_input_path <- paste0(DOWNLOAD_BASE, ID, "?file=", ORIGINAL_FILE_STAGE)
+      input_dest_file <- file.path(THIS_TMP_DIR, "input_data")
+      if (!file.exists(input_dest_file)){
+
+        logging <- paste(logging,"\nDownloading from",  raw_input_path)
+        logging <- paste(logging,"\nThis can take a while, depending on how large the dataset is")
+        shinyjs::html("progressMGRAST",logging)
+        download.file(url=raw_input_path, destfile = input_dest_file)
+      }
+
+      }
 
 
   #############  Download NCBI Tax file
@@ -117,9 +125,16 @@ processMGRAST <- function(ID, TMP_DIR, output,e = environment()){
   # Yay!
   names <- c("id", "m5nr", "annotations")
 
-  ont <- data.table::fread(ontology_dest_file, drop = 3, col.names = names)
+  if(!is.null(ID)){
+    ont <- data.table::fread(ontology_dest_file, drop = 3, col.names = names)
+    org <- data.table::fread(organism_dest_file,  drop = 3, col.names = names)
+
+  }else if (!is.null(privateCOGfile) & !is.null(privateRefSeqfile) ){
+      ont <- data.table::fread(privateCOGfile, drop = 3, col.names = names)
+      org <- data.table::fread(privateRefSeqfile,  drop = 3, col.names = names)
+    }
+
   n_ont <- nrow(ont)
-  org <- data.table::fread(organism_dest_file,  drop = 3, col.names = names)
   n_org <- nrow(org)
   org <- org %>% transform(annotations = strsplit(annotations, ";")) %>% tidyr::unnest(annotations)
   org$annotations <- gsub("\\[", "", gsub("\\]", "", org$annotations))
