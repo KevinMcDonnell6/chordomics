@@ -7,6 +7,7 @@ processMGRAST <- function(ID = NULL,
                           e = environment()){
   logging<-("")
 
+  taxlevel_for_matching <- "species"
 
 if(!is.null(ID)){
 
@@ -17,7 +18,7 @@ if(!is.null(ID)){
       EVALUE <- 10
       #TMP_DIR <- file.path(".","tmp")
       THIS_TMP_DIR <- file.path(TMP_DIR, ID)
-      taxlevel_for_matching <- "species"
+
       logging<-paste(logging,"Creating folder ",  THIS_TMP_DIR,"\n")
       shinyjs::html("progressMGRAST",logging)
       # make a place to download our results, with a subdir for each new dataset
