@@ -124,8 +124,9 @@ ChordShinyAppServer <- function(input, output, session) {
   })
 
 
+  processedDataMGRAST <- shiny::reactiveVal()
   shiny::observeEvent(input$preparedataMGRAST,{
-    print("in function")
+
     # create directory if it doesn't exist
     DATA_DIR <- file.path(path.expand("~"),"chordomics")
     if(!dir.exists(DATA_DIR)){
@@ -176,13 +177,13 @@ ChordShinyAppServer <- function(input, output, session) {
           # COG Names
           shinyjs::html("progressMGRAST","\nAdding names",add = T)
           processData <- COG_names(processData,"COG")
-          processedData(processData)
+          processedDataMGRAST(processData)
           # save data
           shinyjs::html("progressMGRAST","\nFile ready to download!",add = T)
           New_Name <- input$MGMid
           new_file_name <- paste0(New_Name,"_clean.csv")
           output$thedownloadbuttonMGRAST <- shiny::renderUI({
-            shiny::downloadButton('downloadData', 'Download')
+            shiny::downloadButton('downloadDataMGRAST', 'Download')
           })
           #write.csv(processData,file.path(DATA_DIR,paste0(New_Name,"_clean.csv")))
           # shinyjs::html("progressMGRAST","\nDone",add = T)
@@ -242,6 +243,32 @@ ChordShinyAppServer <- function(input, output, session) {
       # Write to a file specified by the 'file' argument
       write.table(processedData(), file, sep = ",",
         row.names = FALSE)
+    },
+    contentType = "text/csv"
+  )
+
+
+  output$downloadDataMGRAST <- shiny::downloadHandler(
+
+    # This function returns a string which tells the client
+    # browser what name to use when saving the file.
+    filename = function() {
+      if(!is.null(input$rawMPAfile)){
+        new_file_name <- gsub(
+          pattern = "(.*)(\\..*)",
+          replacement = "\\1_clean.csv",
+          x=input$rawMPAfile$name)#"(.*?)")
+      } else {
+        new_file_name = paste0(input$MGMid,"_clean.csv")
+      }
+      new_file_name
+    },
+    # This function should write data to a file given to it by
+    # the argument 'file'.
+    content = function(file) {
+      # Write to a file specified by the 'file' argument
+      write.table(processedDataMGRAST(), file, sep = ",",
+                  row.names = FALSE)
     },
     contentType = "text/csv"
   )
