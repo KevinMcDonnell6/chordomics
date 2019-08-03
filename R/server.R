@@ -205,6 +205,7 @@ ChordShinyAppServer <- function(input, output, session) {
           logging <- ("")
           processData <-  processMGRAST(privateCOGfile = input$MGRASTcogfile$datapath,
                                         privateRefSeqfile = input$MGRASTtaxfile$datapath,
+                                        privateInfofile = input$MGRASTinfofile$datapath,
                                         TMP_DIR = DATA_DIR,
                                         e=environment())
 
