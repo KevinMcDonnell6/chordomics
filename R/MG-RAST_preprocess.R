@@ -242,7 +242,7 @@ if(!is.null(ID)){
    else if(!is.null(privateCOGfile) & !is.null(privateRefSeqfile) & !is.null(privateInfofile)){
     lines_of_input <- readLines(privateInfofile)
     seqnames <- lines_of_input[grepl(">",lines_of_input, fixed = T)]
-    total_sequences <- len(seqnames)
+    total_sequences <- length(seqnames)
     rm(lines_of_input)
   }
 
