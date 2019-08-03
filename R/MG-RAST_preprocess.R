@@ -134,7 +134,8 @@ if(!is.null(ID)){
   }else if (!is.null(privateCOGfile) & !is.null(privateRefSeqfile) & !is.null(privateInfofile)){
       ont <- data.table::fread(privateCOGfile, drop = 3, col.names = names)
       org <- data.table::fread(privateRefSeqfile,  drop = 3, col.names = names)
-      # info <- data.table.fread()
+
+      THIS_TMP_DIR <- file.path(TMP_DIR,unlist(strsplit(ont$id[1],"\\|"))[1])
 
     }
 
@@ -179,7 +180,6 @@ if(!is.null(ID)){
       these_names <- tax$V1[grepl(query, tax$short, fixed=T)]
       org[grepl(query, org$annotations, fixed = T), "taxids"] <- paste(unique(these_names), collapse=";")
 
-      THIS_TMP_DIR <- file.path(TMP_DIR,unlist(strsplit(ont$id[1],"\\|"))[1])
     }
   }
   logging <- paste0(logging,"\ncomplete \nmerging data")
