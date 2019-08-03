@@ -3,6 +3,7 @@ processMGRAST <- function(ID = NULL,
                           TMP_DIR,
                           privateCOGfile = NULL,
                           privateRefSeqfile = NULL,
+                          privateInfofile = NULL,
                             # private
                           e = environment()){
   logging<-("")
@@ -130,9 +131,11 @@ if(!is.null(ID)){
     ont <- data.table::fread(ontology_dest_file, drop = 3, col.names = names)
     org <- data.table::fread(organism_dest_file,  drop = 3, col.names = names)
 
-  }else if (!is.null(privateCOGfile) & !is.null(privateRefSeqfile) ){
+  }else if (!is.null(privateCOGfile) & !is.null(privateRefSeqfile) & !is.null(privateInfofile)){
       ont <- data.table::fread(privateCOGfile, drop = 3, col.names = names)
       org <- data.table::fread(privateRefSeqfile,  drop = 3, col.names = names)
+      # info <- data.table.fread()
+
     }
 
   n_ont <- nrow(ont)
@@ -175,10 +178,13 @@ if(!is.null(ID)){
       #names <- tax$V1[grepl(query, tax$all, fixed=T)]
       these_names <- tax$V1[grepl(query, tax$short, fixed=T)]
       org[grepl(query, org$annotations, fixed = T), "taxids"] <- paste(unique(these_names), collapse=";")
+
+      THIS_TMP_DIR <- file.path(TMP_DIR,unlist(strsplit(ont$id[1],"\\|"))[1])
     }
   }
   logging <- paste0(logging,"\ncomplete \nmerging data")
   shinyjs::html("progressMGRAST",logging)
+
   #  we need to get rid of the bit they put after the seqname
   ont$id <- gsub("(.*)\\|(.*)\\|.*", "\\1|\\2", ont$id)
   org$id <- gsub("(.*)\\|(.*)\\|.*", "\\1|\\2", org$id)
@@ -190,10 +196,10 @@ if(!is.null(ID)){
   #  But only half sequences with organism have ontology
   table(org_names %in% ont_names)
 
-
+  print("dplyr to the rescue")
   # dplyr to the rescue
   # we need to unnest the possible taxids, and then, for each sequence,
-  # merge them to a single column so we can join witht he oontology data later
+  # merge them to a single column so we can join with the ontology data later
   min_org <- org %>%
     transform(taxids = strsplit(taxids, ";")) %>%
     tidyr::unnest(taxids) %>%
@@ -203,6 +209,7 @@ if(!is.null(ID)){
     dplyr::distinct() %>%
     dplyr::ungroup()
 
+  print("ontology data")
   # process the ontology data
   # 1) extract the COG (I didn't see any that had more than 1 per row)
   ont$annotations <- gsub(".*COG(.*?)\\].*", "COG\\1", ont$annotations)
@@ -215,26 +222,44 @@ if(!is.null(ID)){
     dplyr::distinct() %>%
     dplyr::ungroup()
 
+  print("almost there")
   # merge, but only keep the union of the dataset
   combined <- merge(min_org, min_ont, by="id", all = T)
-  #path to stats
-  stats_api <- paste0("https://api-ui.mg-rast.org/metagenome/", ID, "?verbosity=stats&detail=sequence_stats")
-  total_sequences <- as.numeric(gsub(".*sequence_count_raw\\:(\\d+).*", "\\1", gsub("\"","", readLines(stats_api, warn = F))))
+
+
+  if(!is.null(ID)){
+
+    #path to stats
+    stats_api <- paste0("https://api-ui.mg-rast.org/metagenome/", ID, "?verbosity=stats&detail=sequence_stats")
+    print("need ID just before this")
+    total_sequences <- as.numeric(gsub(".*sequence_count_raw\\:(\\d+).*", "\\1", gsub("\"","", readLines(stats_api, warn = F))))
+
+    summary_text<- c("# Summary of MG-RAST merging")
+    lines_of_input <- readLines(input_dest_file)
+    seqnames <- lines_of_input[grepl(">",lines_of_input, fixed = T)]
+    rm(lines_of_input)
+  }
+   else if(!is.null(privateCOGfile) & !is.null(privateRefSeqfile) & !is.null(privateInfofile)){
+    lines_of_input <- readLines(privateInfofile)
+    seqnames <- lines_of_input[grepl(">",lines_of_input, fixed = T)]
+    total_sequences <- len(seqnames)
+    rm(lines_of_input)
+  }
+
+
+
   combined_all <- combined
   for(i in 1:(total_sequences-nrow(combined))){
     combined_all <- rbind(combined_all, data.frame(id=paste0("dummy",i),taxids_by_seq=NA,COGs_by_seq=NA))
   }
   write.table(combined_all, file.path(THIS_TMP_DIR, "merged_taxonomy_and_function.tab"), sep = "\t", row.names = F)
-
+print("just after writing table")
 
   ###########################################  make a summary file #######################
   logging <- paste0(logging,"\nprinting summary file")
   shinyjs::html("progressMGRAST",logging)
 
-  summary_text<- c("# Summary of MG-RAST merging")
-  lines_of_input <- readLines(input_dest_file)
-  seqnames <- lines_of_input[grepl(">",lines_of_input, fixed = T)]
-  rm(lines_of_input)
+
   gc()
   summary_text <-c(summary_text, paste("sequences in input", length(seqnames), sep="\t"))
   summary_text <-c(summary_text, paste("ontology hits", n_ont, sep="\t"))
