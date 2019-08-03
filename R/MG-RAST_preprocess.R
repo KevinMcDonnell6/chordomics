@@ -234,7 +234,6 @@ if(!is.null(ID)){
     print("need ID just before this")
     total_sequences <- as.numeric(gsub(".*sequence_count_raw\\:(\\d+).*", "\\1", gsub("\"","", readLines(stats_api, warn = F))))
 
-    summary_text<- c("# Summary of MG-RAST merging")
     lines_of_input <- readLines(input_dest_file)
     seqnames <- lines_of_input[grepl(">",lines_of_input, fixed = T)]
     rm(lines_of_input)
@@ -261,6 +260,7 @@ print("just after writing table")
 
 
   gc()
+  summary_text<- c("# Summary of MG-RAST merging")
   summary_text <-c(summary_text, paste("sequences in input", length(seqnames), sep="\t"))
   summary_text <-c(summary_text, paste("ontology hits", n_ont, sep="\t"))
   summary_text <-c(summary_text, paste("unique ontology hits", length(unique(ont$annotations)), sep="\t"))
