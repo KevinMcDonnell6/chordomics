@@ -197,7 +197,7 @@ ChordShinyAppServer <- function(input, output, session) {
           print("try again network error")
           print(e)})
 
-    }else if(!is.null(input$MGRASTcogfile) & !is.null(input$MGRASTtaxfile)){
+    }else if(!is.null(input$MGRASTcogfile) & !is.null(input$MGRASTtaxfile) & !is.null(input$MGRASTinfofile)){
       # run process MG-rast
       tryCatch(
         {
@@ -301,14 +301,17 @@ ChordShinyAppServer <- function(input, output, session) {
     # This function returns a string which tells the client
     # browser what name to use when saving the file.
     filename = function() {
+      if(!is.null(input$MGRASTcogfile) & !is.null(input$MGRASTtaxfile) & !is.null(input$MGRASTinfofile)){
+        new_file_name <- paste0(unlist(strsplit(processedDataMGRAST()[1,1],"\\|"))[1],"_clean.csv")
+      # }
       # if(!is.null(input$rawfile)){
       #   new_file_name <- gsub(
       #     pattern = "(.*)(\\..*)",
       #     replacement = "\\1_clean.csv",
       #     x=input$rawMPAfile$name)#"(.*?)")
-      # } else {
+      } else if(!is.null(input$MGMid)) {
         new_file_name = paste0(input$MGMid,"_clean.csv")
-      # }
+      }
       new_file_name
     },
     # This function should write data to a file given to it by
