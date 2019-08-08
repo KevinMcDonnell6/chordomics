@@ -41,7 +41,7 @@ assign_taxa <- function(df,shinylogs=NULL){
     if (Sys.time() - t3 > 10){
       setTxtProgressBar(pb,i)
       if(!is.null(shinylogs)){
-        shinyjs::html(id= "progress",paste0(shinylogs,"\n",format(round((i/len)*100,digits = 2),nsmall = 2),"%"),add = F)
+        shinyjs::html(id= "progressMGRAST",paste0(shinylogs,"\n",format(round((i/len)*100,digits = 2),nsmall = 2),"%"),add = F)
 
       }
       t3 <- Sys.time()
