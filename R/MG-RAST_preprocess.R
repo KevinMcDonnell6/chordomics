@@ -132,11 +132,18 @@ if(!is.null(ID)){
     org <- data.table::fread(organism_dest_file,  drop = 3, col.names = names)
 
   }else if (!is.null(privateCOGfile) & !is.null(privateRefSeqfile) & !is.null(privateInfofile)){
-      ont <- data.table::fread(privateCOGfile, drop = 3, col.names = names)
-      org <- data.table::fread(privateRefSeqfile,  drop = 3, col.names = names)
+      ont <- data.table::fread(privateCOGfile)
+      ont <- dplyr::select(ont,1,2,"semicolon separated list of annotations")
+      colnames(ont) <- names
+
+      org <- data.table::fread(privateRefSeqfile)
+      org <- dplyr::select(org,1,2,"semicolon separated list of annotations")
+      colnames(org) <- names
 
       THIS_TMP_DIR <- file.path(TMP_DIR,unlist(strsplit(ont$id[1],"\\|"))[1])
-
+      if(!exists(THIS_TMP_DIR)){
+        dir.create(THIS_TMP_DIR)
+      }
     }
 
   n_ont <- nrow(ont)
