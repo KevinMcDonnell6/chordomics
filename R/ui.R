@@ -9,94 +9,41 @@ ChordShinyAppUI <- shiny::fluidPage( shinyjs::useShinyjs(),
   # titlePanel("CircosPro"),
   shiny::tabsetPanel(
 
-    shiny::tabPanel(
-      "1. File Upload",
+    shiny::tabPanel("Chordomics",
 
-      shiny::fluidRow( shiny::sidebarLayout(
-        shiny::sidebarPanel(
-          shiny::fileInput("files",
-                           label="Upload CSVs here",
-                           multiple = TRUE)
-        ),
 
-        shiny::mainPanel(
-          shiny::h2("Welcome to Chordomics!"),
-          shiny::p("Upload your processed datasets using the panel on the left."),
-          shiny::p("Ensure the file types are csv format and contain headings
+                      shiny::h2("Welcome to Chordomics!"),
+                      shiny::p("Chordomics is a tool for visualising the link between
+                               taxonomy and function in meta-omics data. We also provide a
+                               pipeline to format the your files correctly"),
+                      shiny::p("Please navigate to the required tab"),
+                      shiny::uiOutput("github"),
+                    shiny::fluidRow(
+                      shiny::column(6,
+                      shiny::h3("1. Metagenomics/Metatranscriptomics Data Processing"),
+                      shiny::p("Here users can join their MG-RAST organism and ontology files.
+                               These processed files can then be uploaded into chordomics for
+                               analysis."),
+                      shiny::h3("2. Metaproteomics Data Processing"),
+                      shiny::p("Here the user can annotate their MetaProteomeAnalyzer
+                               datasets with COG ID's using the UniProt API.These processed
+                                files can then be uploaded into chordomics for analysis."),
+                      shiny::h3("3. Processed File Upload"),
+                      shiny::p("Here users can upload their processed files to Chordomics for analysis."),
+                      shiny::p("Ensure the file types are csv format and contain headings
                    of taxonomic rank (Superkingdom, Kingdom, Phylum, Class, Order, Family, Genus and/or Species) and function (COG_Category and/or COG_Name)"),
-          shiny::uiOutput("github")
-        )
-      )
-      )
-    ),
-    shiny::tabPanel("2. Chord Plot",
-
-                    # Sidebar with a slider input for zoom and level of taxa
-                    shiny::sidebarLayout(
-                      shiny::sidebarPanel(
-                        width = 3,
-
-                        shiny::actionButton("example","Load Example Data"),
-                        shiny::sliderInput("margin", "Zoom",  min = 0, max = 400, value = 200),
-                        shiny::sliderInput("fontsize", "Font size",  min = 6, max = 40, value = 10),
-                        DT::DTOutput("tbl2"),
-                        DT::DTOutput("tbl"),
-                        DT::DTOutput("tbl3")
-                      ),
-
-                      # Show a plot of the Circos
-                      shiny::mainPanel(
-                        shiny::tags$style(type="text/css",
-                                          ".shiny-output-error { visibility: hidden; }",
-                                          ".shiny-output-error:before { visibility: hidden; }"
-                        ),
-                        # mainPanel( textOutput("myFileNames")),
-                        #downloadButton('foo',class = "rightAlign"),
-                        # uiOutput("CPlot"),
-                        #verbatimTextOutput("summary"),
-                        shiny::actionButton('dloadImage', "Download",  class = "rightAlign", onclick =paste0(
-                          "javascript: (function () { var e = document.createElement('script'); ",
-                          "e.setAttribute('src', '",
-                          #"svg-crowbar.js",
-                          "https://combinatronics.com/KevinMcDonnell6/chordomics/master/inst/www/svg-crowbar.js",
-                          "'); e.setAttribute('class', 'svg-crowbar'); document.body.appendChild(e); })();")),
-                        shiny::actionButton('reset',"Reset",class = "rightAlign"),
-                        # uiOutput("CPlot"),
-                        shiny::htmlOutput("SelectedGroupName"),
-                        shiny::htmlOutput("SelectedGrouptaxaName"),
-                        chorddiag::chorddiagOutput("ChordPlot", width="100%", height='1000px')#,
-
-                      )
-                    )
-    ),
-    shiny::tabPanel("3. Metaproteomics Data Processing",
-                    shiny::fluidRow( shiny::sidebarLayout(
-                      shiny::sidebarPanel(
-                        shiny::fileInput("rawMPAfile",
-                                         label="Upload MPA CSVs here",
-                                         multiple = F),
-                        # shiny::textInput("MGMid","MG-RAST Identification",placeholder = "mgm4491407.3"),
-                        shiny::actionButton("preparedata", "Prepare Data"),
-                        shiny::uiOutput("thedownloadbutton")
-                      ),
-
-                      shiny::mainPanel(shiny::verbatimTextOutput("Status"),
-                                       shiny::h2("Metaproteomics Data Preprocessing"),
-                                       shiny::br(),
-                                       shiny::p("Before data can be explored using chordomics it must be presented in the correct format.
-                                                Use this tool to get both functional (COG) and phylogenetic information as well as format your data."),
-                                       shiny::p("Please upload an MetaProteomeAnalyzer(MPA) dataset to the upper section of the
-                                                panel on the left"),
-                                       shiny::p("Once the dataset is entered press Prepare Data"),
-                                       shiny::br(),
-                                       "Progress:",
-                                       shiny::tags$pre(id = "progress")#,
-                                       #shiny::HTML("<p style='color:lightgrey'>try mgm4762935.3</p>")
-
+                      shiny::h3("4. Chord Plot"),
+                      shiny::p("View your uploaded data here or select 'Load Example Data' to see an example")),
+                      column(6,
+                      shiny::img(#src="https://raw.githubusercontent.com/KevinMcDonnell6/chordomics/master/Walkthroughs/exampleChordPlot.svg",
+                        src="https://raw.githubusercontent.com/KevinMcDonnell6/chordomics/master/Walkthroughs/Screenshot.png",
+                                 width="75%")
                       )
 
-                    ))),
-    shiny::tabPanel("4. MG-RAST Data Processing",
+
+                    )),
+
+    shiny::tabPanel("1. Metagenomics/Metatranscriptomics Data Processing",
                     shiny::fluidRow( shiny::sidebarLayout(
                       shiny::sidebarPanel(
                         # shiny::fileInput("rawMPAfile",
@@ -124,17 +71,118 @@ ChordShinyAppUI <- shiny::fluidPage( shinyjs::useShinyjs(),
                       shiny::mainPanel(shiny::h2("Metagenomics/Metatranscriptomics Data Preprocessing"),
                                        shiny::br(),
                                        shiny::p("Before data can be explored using chordomics it must be presented in the correct format.
-                                                Use this tool to get both functional (COG) and phylogenetic information as well as format your data."),
+                                                Use this tool to merge both functional (COG) and phylogenetic information fro MG-RAST as well as format your data."),
                                        shiny::p("Please enter an MG-RAST ID to the upper section of the
-                                                panel on the left or upload the COG functional file and RefSeq phylogeny file from your private repository to the lower section"),
+                                                panel on the left or upload the COG functional file, RefSeq phylogeny file and original
+                                                input fasta file from your private repository to the lower section"),
                                        shiny::p("Once the ID is entered/datasets are uploaded press Prepare Data"),
                                        shiny::br(),
                                        "Progress:",
                                        shiny::tags$pre(id = "progressMGRAST")#,
                                        #shiny::HTML("<p style='color:lightgrey'>try mgm4762935.3</p>")
 
-                      )
+                                       )
 
-                    )))
+                      ))),
+    shiny::tabPanel("2. Metaproteomics Data Processing",
+                    shiny::fluidRow( shiny::sidebarLayout(
+                      shiny::sidebarPanel(
+                        shiny::fileInput("rawMPAfile",
+                                         label="Upload MPA CSVs here",
+                                         multiple = F),
+                        # shiny::textInput("MGMid","MG-RAST Identification",placeholder = "mgm4491407.3"),
+                        shiny::actionButton("preparedata", "Prepare Data"),
+                        shiny::uiOutput("thedownloadbutton")
+                      ),
+
+                      shiny::mainPanel(shiny::verbatimTextOutput("Status"),
+                                       shiny::h2("Metaproteomics Data Preprocessing"),
+                                       shiny::br(),
+                                       shiny::p("Before data can be explored using chordomics it must be presented in the correct format.
+                                                Use this tool to get functional (COG) information using the UniProt API as well as format your data."),
+                                       shiny::p("Please upload an MetaProteomeAnalyzer(MPA) dataset to the upper section of the
+                                                panel on the left"),
+                                       shiny::p("Once the dataset is entered press Prepare Data"),
+                                       shiny::br(),
+                                       "Progress:",
+                                       shiny::tags$pre(id = "progress")#,
+                                       #shiny::HTML("<p style='color:lightgrey'>try mgm4762935.3</p>")
+
+                                       )
+
+                      ))),
+
+    shiny::tabPanel(
+      "3. Processed File Upload",
+
+      shiny::fluidRow( shiny::sidebarLayout(
+        shiny::sidebarPanel(
+          shiny::fileInput("files",
+                           label="Upload CSVs here",
+                           multiple = TRUE)
+        ),
+
+        shiny::mainPanel(
+          shiny::h2("Processed File Upload"),
+          shiny::p("Upload your processed datasets using the panel on the left."),
+          shiny::p("Datasets can be the output of the previous two processing tabs or data formatted in the same way."),
+          shiny::p("Ensure the file types are csv format and contain headings
+                   of taxonomic rank (Superkingdom, Kingdom, Phylum, Class, Order, Family, Genus and/or Species)
+                   and function (COG_Category and/or COG_Name). All other headings are ignored."),
+          shiny::p("See example table below.")
+          # shiny::uiOutput("github")
+
+        )
+      )
+      ),
+      shiny::br(),
+      shiny::h3("Example data format"),
+      shiny::div(shiny::tableOutput("exampleTable"),style="font-size:80%")
+    ),
+    shiny::tabPanel("4. Chord Plot",
+
+                    # Sidebar with a slider input for zoom and level of taxa
+                    shiny::sidebarLayout(
+                      shiny::sidebarPanel(
+                        width = 3,
+
+                        shiny::actionButton("example","Load Example Data"),
+                        shiny::checkboxInput("noTax", "exclude no tax",value = F),
+                        shiny::sliderInput("margin", "Zoom",  min = 0, max = 400, value = 200),
+                        shiny::sliderInput("fontsize", "Font size",  min = 6, max = 40, value = 10),
+                        DT::DTOutput("tbl2"),
+                        DT::DTOutput("tbl"),
+                        DT::DTOutput("tbl3")
+                      ),
+
+                      # Show a plot of the Circos
+                      shiny::mainPanel(
+                        shiny::tags$style(type="text/css",
+                                          ".shiny-output-error { visibility: hidden; }",
+                                          ".shiny-output-error:before { visibility: hidden; }"
+                        ),
+                        # mainPanel( textOutput("myFileNames")),
+                        #downloadButton('foo',class = "rightAlign"),
+                        # uiOutput("CPlot"),
+                        #verbatimTextOutput("summary"),
+                        shiny::actionButton('dloadImage', "Download",  class = "rightAlign", onclick =paste0(
+                          "javascript: (function () { var e = document.createElement('script'); ",
+                          "e.setAttribute('src', '",
+                          #"svg-crowbar.js",
+                          "https://combinatronics.com/KevinMcDonnell6/chordomics/master/inst/www/svg-crowbar.js",
+                          "'); e.setAttribute('class', 'svg-crowbar'); document.body.appendChild(e); })();")),
+                        shiny::actionButton('reset',"Reset",class = "rightAlign"),
+                        # uiOutput("CPlot"),
+                        shiny::htmlOutput("Total"),
+                        shiny::htmlOutput("SelectedGroupName"),
+                        shiny::htmlOutput("SelectedGrouptaxaName"),
+                        chorddiag::chorddiagOutput("ChordPlot", width="100%", height='1000px')#,
+
+                      )
+                    )
+    )
+
   )
 )
+
+

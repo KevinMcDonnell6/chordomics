@@ -264,6 +264,9 @@ ChordShinyAppServer <- function(input, output, session) {
     ))
   })
 
+  output$exampleTable <- shiny::renderTable({read.csv(system.file("extdata", "Day1.csv", package = "chordomics"),
+                                                       nrows = 10)[3:10,]},
+                                            width = "75%",striped = T)
 
   # Reset example data if data loaded in
   # taken from https://github.com/rstudio/shiny-examples/blob/master/039-download-file/server.R
@@ -464,7 +467,7 @@ ChordShinyAppServer <- function(input, output, session) {
   output$myFileNames <- shiny::renderText({ file_name() })
 
   # Create reactive value Group
-  # This will hold the selcted group the user chooses to look at
+  # This will hold the selected group the user chooses to look at
   Group <- shiny::reactiveVal(NULL)
   Grouptaxa <- shiny::reactiveVal(NULL)
   previoustaxa <- shiny::reactiveVal(NULL)
@@ -480,11 +483,15 @@ ChordShinyAppServer <- function(input, output, session) {
   # When Group is selected, assign name to Group (grouptaxaSelection comes from JS)
   shiny::observeEvent(input$grouptaxaSelection,{
     Grouptaxa(input$grouptaxaSelection)
+    shiny::updateCheckboxInput(session = session,inputId = "noTax",value = F)
     if(is.null(Grouptaxa()) || Grouptaxa()!= "Other Taxa"){
       previousrank(taxa_ranks()[input$tbl_rows_selected])
       previoustaxa(Grouptaxa())
     }
+  })
 
+  shiny::observeEvent(input$tbl_rows_selected,{
+    shiny::updateCheckboxInput(session = session,inputId = "noTax",value = F)
   })
 
   # Initialse empty place holder for "Others" category
@@ -503,6 +510,18 @@ ChordShinyAppServer <- function(input, output, session) {
     shiny::req(previoustaxa())
     return(paste("<b>Selected Taxa:</b> ",previousrank(),"-",previoustaxa()))})
 
+
+
+
+  Total_entries <- shiny::reactiveVal()
+  # Show total entries shown
+  output$Total <- shiny::renderText({
+    shiny::req(Total_entries())
+    # if(!is.null(Total_entries)){
+
+      return(paste("<b>Total count:</b> ",Total_entries()))
+    # }
+    })
 
 
   ############# Selection Tables for plot ####################
@@ -570,6 +589,9 @@ ChordShinyAppServer <- function(input, output, session) {
     # level of function resolution
     f <- input$tbl3_rows_selected
     shiny::req(f)
+
+    if(input$noTax){table1 <- table1[table1[,s]!="No taxonomy",]}
+
     if (!taxa_ranks()[s] %in% colnames(table1)){
       stop(paste0("Misformatted data: '", s, "' not found in header of input data."))
     }
@@ -648,7 +670,8 @@ ChordShinyAppServer <- function(input, output, session) {
       shiny::showNotification(ui = paste("Error in selected data please reset"),duration = 5)
     })
 
-
+    # assign Total_entries
+    Total_entries(nrow(chord_table))
 
     # summarise the tibble
     mat_list<- chord_table %>% dplyr::group_by(taxonomy,functionCol) %>% dplyr::summarise(n=dplyr::n())
@@ -731,6 +754,9 @@ ChordShinyAppServer <- function(input, output, session) {
         # Create holder for data
         Data.holder <- Data()[[i]]
         Data.holder[,taxa_ranks()[s]] <- (stringr::str_trim(as.character(Data()[[i]][,taxa_ranks()[s]])))
+
+
+        if(input$noTax){Data.holder <- Data.holder[Data.holder[,taxa]!="No taxonomy",]}
 
         # if taxa was selected subset the data
         if(!is.null(previoustaxa())){
@@ -986,3 +1012,4 @@ ChordShinyAppServer <- function(input, output, session) {
 
   output$ChordPlot <- chorddiag::renderChorddiag({Cplot()})
 }
+
