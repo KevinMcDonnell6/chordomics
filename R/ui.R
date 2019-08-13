@@ -34,7 +34,7 @@ ChordShinyAppUI <- shiny::fluidPage( shinyjs::useShinyjs(),
                    of taxonomic rank (Superkingdom, Kingdom, Phylum, Class, Order, Family, Genus and/or Species) and function (COG_Category and/or COG_Name)"),
                       shiny::h3("4. Chord Plot"),
                       shiny::p("View your uploaded data here or select 'Load Example Data' to see an example")),
-                      column(6,
+                      shiny::column(6,
                       shiny::img(#src="https://raw.githubusercontent.com/KevinMcDonnell6/chordomics/master/Walkthroughs/exampleChordPlot.svg",
                         src="https://raw.githubusercontent.com/KevinMcDonnell6/chordomics/master/Walkthroughs/Screenshot.png",
                                  width="75%")
