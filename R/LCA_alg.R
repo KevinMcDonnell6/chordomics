@@ -12,7 +12,7 @@ LCA_alg <- function(df){
     un <- unique(x)
     return(ifelse(length(un)==1, # Is there a unique taxon at this rank?
                   un, # If unqique (only 1) return it
-                  "")) # If not unique return blank
+                  "Unknown")) # If not unique return Unknown
   },FUN.VALUE = "")
 
   return(LCAdf)
@@ -48,6 +48,9 @@ assign_taxa <- function(df,shinylogs=NULL){
     }
     #Create vector of tax_ids
     ids <- unique(as.integer(unlist(strsplit(df[i,"taxids_by_seq"],";"))))
+
+    if(any(is.na(ids))){next}
+
 
     # Merge tax_ids and taxonomy into single dataframe
     # Select lineages for possible ids

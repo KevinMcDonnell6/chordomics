@@ -21,7 +21,7 @@ test_input <-
   )
 
 test_that("Test assign_taxa", {
-  expect_equal(c("Euryarchaeota", "Euryarchaeota", "", "Chloroflexi", "", ""),
+  expect_equal(c("Euryarchaeota", "Euryarchaeota", "Unknown", "Chloroflexi", "Unknown", "Unknown"),
                chordomics:::assign_taxa(df = test_input,shinylogs = NULL)$phylum)
 })
 
