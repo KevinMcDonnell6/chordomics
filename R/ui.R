@@ -148,7 +148,10 @@ ChordShinyAppUI <- shiny::fluidPage( shinyjs::useShinyjs(),
                         width = 3,
 
                         shiny::actionButton("example","Load Example Data"),
-                        shiny::checkboxInput("noTax", "exclude no tax",value = F),
+                        shinyWidgets::prettySwitch("noTax", "exclude No taxonomy",value = F,fill = T),
+                        shinyWidgets::prettySwitch("unknown", "exclude Unknown taxonomy",value = F,fill = T),
+                        shinyWidgets::prettySwitch("noCOG", "exclude No COG",value = F,fill = T),
+
                         shiny::sliderInput("margin", "Zoom",  min = 0, max = 400, value = 200),
                         shiny::sliderInput("fontsize", "Font size",  min = 6, max = 40, value = 10),
                         DT::DTOutput("tbl2"),

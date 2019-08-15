@@ -483,7 +483,7 @@ ChordShinyAppServer <- function(input, output, session) {
   # When Group is selected, assign name to Group (grouptaxaSelection comes from JS)
   shiny::observeEvent(input$grouptaxaSelection,{
     Grouptaxa(input$grouptaxaSelection)
-    shiny::updateCheckboxInput(session = session,inputId = "noTax",value = F)
+    # shiny::updateCheckboxInput(session = session,inputId = "noTax",value = F)
     if(is.null(Grouptaxa()) || Grouptaxa()!= "Other Taxa"){
       previousrank(taxa_ranks()[input$tbl_rows_selected])
       previoustaxa(Grouptaxa())
@@ -491,7 +491,7 @@ ChordShinyAppServer <- function(input, output, session) {
   })
 
   shiny::observeEvent(input$tbl_rows_selected,{
-    shiny::updateCheckboxInput(session = session,inputId = "noTax",value = F)
+    # shiny::updateCheckboxInput(session = session,inputId = "noTax",value = F)
   })
 
   # Initialse empty place holder for "Others" category
@@ -590,7 +590,10 @@ ChordShinyAppServer <- function(input, output, session) {
     f <- input$tbl3_rows_selected
     shiny::req(f)
 
-    if(input$noTax){table1 <- table1[table1[,s]!="No taxonomy",]}
+    if(input$noTax){table1 <- table1[table1[,taxa_ranks()[s]]!="No taxonomy",]}
+    if(input$unknown){table1 <- table1[table1[,taxa_ranks()[s]]!="Unknown",]}
+    if(input$noCOG){table1 <- table1[table1[,functionSelection()[f]]!="No COG",]}
+
 
     if (!taxa_ranks()[s] %in% colnames(table1)){
       stop(paste0("Misformatted data: '", s, "' not found in header of input data."))
@@ -743,7 +746,7 @@ ChordShinyAppServer <- function(input, output, session) {
 
     if(d==1 & numberOfFiles>1){
 
-      #seleted rank
+      #selected rank
       taxa <- taxa_ranks()[s]
 
       all_df_sums <- list()
@@ -757,6 +760,8 @@ ChordShinyAppServer <- function(input, output, session) {
 
 
         if(input$noTax){Data.holder <- Data.holder[Data.holder[,taxa]!="No taxonomy",]}
+        if(input$unknown){Data.holder <- Data.holder[Data.holder[,taxa]!="Unknown",]}
+        if(input$noCOG){Data.holder <- Data.holder[Data.holder[,functionSelection()[f]]!="No COG",]}
 
         # if taxa was selected subset the data
         if(!is.null(previoustaxa())){

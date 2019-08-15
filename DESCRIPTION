@@ -24,6 +24,7 @@ Imports:
     magrittr,
     stats, 
     utils,
+    shinyWidgets,
     ncbiLineages
 Remotes: KevinMcDonnell6/chorddiag,
          KevinMcDonnell6/ncbiLineages
