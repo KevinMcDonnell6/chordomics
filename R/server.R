@@ -1051,8 +1051,6 @@ IntroPlot <- shiny::reactive({
                               "taxonomy"=as.factor(as.character(chord_table$taxonomy)))
 
 
-  # assign Total_entries
-  Total_entries(nrow(chord_table))
 
   # summarise the tibble
   mat_list<- chord_table %>% dplyr::group_by(taxonomy,functionCol) %>% dplyr::summarise(n=dplyr::n())
