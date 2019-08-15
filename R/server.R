@@ -1011,5 +1011,147 @@ ChordShinyAppServer <- function(input, output, session) {
 
 
   output$ChordPlot <- chorddiag::renderChorddiag({Cplot()})
-}
+#}
 
+IntroPlot <- shiny::reactive({
+
+
+  # Assign selected datasets
+  table1 <- as.data.frame(read.csv(system.file("extdata", "Day1.csv", package = "chordomics")),
+                          stringsAsFactors = F)
+
+  # level of selected taxonomic rank
+  s<- "Phylum"#input$tbl_rows_selected
+
+  # level of function resolution
+  f <- "COG_Category"#input$tbl3_rows_selected
+  shiny::req(f)
+
+
+  # Update function and phylogeny selection
+  table1[,s] <- as.factor(stringr::str_trim(as.character(table1[,s])))
+
+
+  # Show selected function level
+  table1$Predicted.Function <- stringr::str_trim(as.character(table1[,f]))
+
+    # extract functions and taxonomy from dataset
+    chord_table <- data.frame(functionCol=table1[,"Predicted.Function"],taxonomy=table1[,s])#Lowest.Common.Ancestor
+
+    # encode NA's as factors
+    chord_table$functionCol <- addNA(chord_table$functionCol)
+    levels(chord_table$functionCol)[is.na(levels(chord_table$functionCol))]<- "N/A"
+    chord_table[is.na(chord_table$functionCol),"functionCol"] <- "N/A"
+
+    # remove NA's from analysis
+    chord_table<- chord_table[chord_table$functionCol!=""&chord_table$functionCol!="N/A",]
+
+    # ensure functions are factors
+    chord_table <- data.frame("functionCol" = as.factor(as.character(chord_table$functionCol)),
+                              "taxonomy"=as.factor(as.character(chord_table$taxonomy)))
+
+
+  # assign Total_entries
+  Total_entries(nrow(chord_table))
+
+  # summarise the tibble
+  mat_list<- chord_table %>% dplyr::group_by(taxonomy,functionCol) %>% dplyr::summarise(n=dplyr::n())
+
+  # Set those below threshold to "Other"
+  sum_function <- mat_list %>% dplyr::group_by(functionCol) %>% dplyr::summarise(N=sum(n))
+  sum_taxonomy <- mat_list %>% dplyr::group_by(taxonomy) %>% dplyr::summarise(N=sum(n))
+
+  threshold <- 0.02
+  funcThreshold <- ifelse(!is.null(Group()) && Group()=="Other",0,threshold)
+  taxThreshold <- ifelse(!is.null(Grouptaxa()) && Grouptaxa()=="Other Taxa",0,threshold)
+
+  Total_entries <- sum(mat_list$n)
+
+  # Change entriess to characters
+  mat_list$functionCol<- as.character(mat_list$functionCol)
+
+
+
+  ##################### Threshold on Groups ###################################
+
+  # Create place holder for "other" functions
+  others_holder <- character(0)
+
+  # Check if functions account for less than 2% of data
+  # If yes assign them to "other" and store their name
+  for(i in 1:length(sum_function$functionCol)){
+    if(sum_function$N[i]/Total_entries < funcThreshold){
+      others_holder <- c(others_holder,as.character(sum_function$functionCol[i]))
+      mat_list$functionCol[mat_list$functionCol==sum_function$functionCol[i]]<- "Other"
+    }
+  }
+
+
+
+  #
+  mat_list$taxonomy<- as.character(mat_list$taxonomy)
+
+  # Create place holder for "other taxa"
+  othertaxa_holder <- character(0)
+
+
+  for(i in 1:length(sum_taxonomy$taxonomy)){
+
+    if(sum_taxonomy$N[i]/Total_entries < taxThreshold){
+      othertaxa_holder <- c(othertaxa_holder,as.character(sum_taxonomy$taxonomy[i]))
+      mat_list$taxonomy[mat_list$taxonomy==sum_taxonomy$taxonomy[i]]<- "Other Taxa"
+    }
+  }
+
+
+
+
+  mat_list$functionCol<- as.factor(mat_list$functionCol)
+  mat_list$taxonomy<- as.factor(mat_list$taxonomy)
+  mat_list <- mat_list %>% dplyr::group_by(taxonomy,functionCol) %>% dplyr::summarise(n=sum(n))
+
+  # Group and summarise mat_list
+  mat_list_groupFun <- mat_list %>% dplyr::group_by(functionCol) %>% dplyr::summarise(N=sum(n)) %>% dplyr::arrange(dplyr::desc(N))
+
+  mat_list_groupTaxa <- mat_list %>% dplyr::group_by(taxonomy) %>% dplyr::summarise(N=sum(n)) %>% dplyr::arrange(dplyr::desc(N))
+
+  mat_list <- mat_list %>% dplyr::arrange(match(taxonomy,mat_list_groupTaxa$taxonomy),match(functionCol,mat_list_groupFun$functionCol))
+
+  x <- unique(mat_list$functionCol)
+
+  y<- unique(mat_list$taxonomy)
+
+
+  # create zero matrix of the dimensions of the functions and taxa
+  m_1 <- matrix(0,nrow = length(y),ncol=length(x),dimnames = list(y,x))
+
+
+  # convert the summary table back to a dataframe
+  df<- as.data.frame(mat_list)
+
+  # add the size of the links to the zero matrix
+  for( i in 1:(nrow(df))){
+
+    m_1[toString(df[i,1]),toString(df[i,2])]<-df[i,3]
+  }
+
+  # create the chord diagram
+  return(
+    chorddiag::chorddiag(m_1,type = "bipartite",
+                         groupColors = substr(grDevices::rainbow(nrow(m_1)+ncol(m_1)),0,7),
+                         groupnamePadding = 20,
+                         groupnameFontsize = input$fontsize,
+                         # categoryNames = T,
+                         categorynamePadding = 200,
+                         ticklabelFontsize = 9,
+                         tickInterval = max(1,sum(mat_list$n)%/%100),
+                         margin = 200,
+                         reactor = NULL,
+                         grouptotals = NULL,
+                         firstfunindex = length(y))
+  )
+})
+
+output$StaticPlot <- chorddiag::renderChorddiag({IntroPlot()})
+
+}

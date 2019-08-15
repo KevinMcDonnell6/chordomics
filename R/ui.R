@@ -15,11 +15,11 @@ ChordShinyAppUI <- shiny::fluidPage( shinyjs::useShinyjs(),
                       shiny::h2("Welcome to Chordomics!"),
                       shiny::p("Chordomics is a tool for visualising the link between
                                taxonomy and function in meta-omics data. We also provide a
-                               pipeline to format the your files correctly"),
-                      shiny::p("Please navigate to the required tab"),
+                               pipeline for correct file formatting."),
+                      shiny::p("Please navigate to the required tab."),
                       shiny::uiOutput("github"),
                     shiny::fluidRow(
-                      shiny::column(6,
+                      shiny::column(5,
                       shiny::h3("1. Metagenomics/Metatranscriptomics Data Processing"),
                       shiny::p("Here users can join their MG-RAST organism and ontology files.
                                These processed files can then be uploaded into chordomics for
@@ -34,10 +34,11 @@ ChordShinyAppUI <- shiny::fluidPage( shinyjs::useShinyjs(),
                    of taxonomic rank (Superkingdom, Kingdom, Phylum, Class, Order, Family, Genus and/or Species) and function (COG_Category and/or COG_Name)"),
                       shiny::h3("4. Chord Plot"),
                       shiny::p("View your uploaded data here or select 'Load Example Data' to see an example")),
-                      shiny::column(6,
-                      shiny::img(#src="https://raw.githubusercontent.com/KevinMcDonnell6/chordomics/master/Walkthroughs/exampleChordPlot.svg",
-                        src="https://raw.githubusercontent.com/KevinMcDonnell6/chordomics/master/Walkthroughs/Screenshot.png",
-                                 width="75%")
+                      shiny::column(7,
+                      # shiny::img(#src="https://raw.githubusercontent.com/KevinMcDonnell6/chordomics/master/Walkthroughs/exampleChordPlot.svg",
+                      #   src="https://raw.githubusercontent.com/KevinMcDonnell6/chordomics/master/Walkthroughs/Screenshot.png",
+                      #            width="75%"),
+                      chorddiag::chorddiagOutput("StaticPlot",width = "100%",height = "700px")
                       )
 
 
