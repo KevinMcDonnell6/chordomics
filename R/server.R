@@ -1148,7 +1148,8 @@ IntroPlot <- shiny::reactive({
                          margin = 200,
                          reactor = NULL,
                          grouptotals = NULL,
-                         firstfunindex = length(y))
+                         firstfunindex = length(y),
+                         clickGroupAction = "static")
   )
 })
 
