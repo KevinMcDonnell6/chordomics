@@ -22,12 +22,12 @@ ChordShinyAppUI <- shiny::fluidPage( shinyjs::useShinyjs(),
                       shiny::column(5,
                       shiny::h3("1. Metagenomics/Metatranscriptomics Data Processing"),
                       shiny::p("Here users can join their MG-RAST organism and ontology files.
-                               These processed files can then be uploaded into chordomics for
+                               These processed files can then be uploaded into Chordomics for
                                analysis."),
                       shiny::h3("2. Metaproteomics Data Processing"),
                       shiny::p("Here the user can annotate their MetaProteomeAnalyzer
                                datasets with COG ID's using the UniProt API.These processed
-                                files can then be uploaded into chordomics for analysis."),
+                                files can then be uploaded into Chordomics for analysis."),
                       shiny::h3("3. Processed File Upload"),
                       shiny::p("Here users can upload their processed files to Chordomics for analysis."),
                       shiny::p("Ensure the file types are csv format and contain headings
@@ -72,11 +72,12 @@ ChordShinyAppUI <- shiny::fluidPage( shinyjs::useShinyjs(),
                       shiny::mainPanel(shiny::h2("Metagenomics/Metatranscriptomics Data Preprocessing"),
                                        shiny::br(),
                                        shiny::p("Before data can be explored using chordomics it must be presented in the correct format.
-                                                Use this tool to merge both functional (COG) and phylogenetic information fro MG-RAST as well as format your data."),
+                                                Use this tool to merge both functional (COG) and phylogenetic information from MG-RAST as well as format your data."),
                                        shiny::p("Please enter an MG-RAST ID to the upper section of the
-                                                panel on the left or upload the COG functional file, RefSeq phylogeny file and original
-                                                input fasta file from your private repository to the lower section"),
-                                       shiny::p("Once the ID is entered/datasets are uploaded press Prepare Data"),
+                                                panel on the left OR upload the COG functional file, RefSeq phylogeny file and original
+                                                input fasta file from your private repository to the lower section."),
+                                       shiny::p("Once the ID is entered/datasets are uploaded press Prepare Data."),
+                                       shiny::p("A download button will appear once the file is ready."),
                                        shiny::br(),
                                        "Progress:",
                                        shiny::tags$pre(id = "progressMGRAST")#,
@@ -101,9 +102,9 @@ ChordShinyAppUI <- shiny::fluidPage( shinyjs::useShinyjs(),
                                        shiny::br(),
                                        shiny::p("Before data can be explored using chordomics it must be presented in the correct format.
                                                 Use this tool to get functional (COG) information using the UniProt API as well as format your data."),
-                                       shiny::p("Please upload an MetaProteomeAnalyzer(MPA) dataset to the upper section of the
-                                                panel on the left"),
-                                       shiny::p("Once the dataset is entered press Prepare Data"),
+                                       shiny::p("Please upload a MetaProteomeAnalyzer(MPA) dataset to the panel on the left."),
+                                       shiny::p("Once the dataset is entered press Prepare Data."),
+                                       shiny::p("A download button will appear once the file is ready."),
                                        shiny::br(),
                                        "Progress:",
                                        shiny::tags$pre(id = "progress")#,
