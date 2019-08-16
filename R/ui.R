@@ -1,4 +1,4 @@
-ChordShinyAppUI <- shiny::fluidPage( shinyjs::useShinyjs(),
+ChordShinyAppUI <- shiny::fluidPage( shinyjs::useShinyjs(),library(shinyWidgets),
   shiny::tags$head(shiny::tags$style(".rightAlign{float:right;}
                                      .shiny-notification{position:fixed;
                                      top: calc(50%);;
