@@ -148,7 +148,7 @@ ChordShinyAppUI <- shiny::fluidPage( shinyjs::useShinyjs(),
                         width = 3,
 
                         shiny::actionButton("example","Load Example Data"),
-                        shinyWidgets::prettySwitch("noTax", "exclude No taxonomy",value = F,fill = T),
+                        shinyWidgets::switchInput("noTax", "exclude No taxonomy",value = F,fill = T),
                         shinyWidgets::prettySwitch("unknown", "exclude Unknown taxonomy",value = F,fill = T),
                         shinyWidgets::prettySwitch("noCOG", "exclude No COG",value = F,fill = T),
 
