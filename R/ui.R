@@ -1,4 +1,4 @@
-ChordShinyAppUI <- shiny::fluidPage( shinyjs::useShinyjs(),library(shinyWidgets),
+ChordShinyAppUI <- shiny::fluidPage( shinyjs::useShinyjs(),
   shiny::tags$head(shiny::tags$style(".rightAlign{float:right;}
                                      .shiny-notification{position:fixed;
                                      top: calc(50%);;
@@ -148,9 +148,9 @@ ChordShinyAppUI <- shiny::fluidPage( shinyjs::useShinyjs(),library(shinyWidgets)
                         width = 3,
 
                         shiny::actionButton("example","Load Example Data"),
-                        shinyWidgets::switchInput("noTax", "exclude No taxonomy",value = F),
-                        shinyWidgets::prettySwitch("unknown", "exclude Unknown taxonomy",value = F,fill = T),
-                        shinyWidgets::prettySwitch("noCOG", "exclude No COG",value = F,fill = T),
+                        shiny::checkboxInput("noTax", "exclude No taxonomy",value = F),
+                        shiny::checkboxInput("unknown", "exclude Unknown taxonomy",value = F),
+                        shiny::checkboxInput("noCOG", "exclude No COG",value = F),
 
                         shiny::sliderInput("margin", "Zoom",  min = 0, max = 400, value = 200),
                         shiny::sliderInput("fontsize", "Font size",  min = 6, max = 40, value = 10),
