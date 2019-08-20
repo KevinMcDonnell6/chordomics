@@ -69,7 +69,7 @@ ChordShinyAppUI <- shiny::fluidPage( shinyjs::useShinyjs(),
                         shiny::uiOutput("thedownloadbuttonMGRAST")
                       ),
 
-                      shiny::mainPanel(shiny::h2("Metagenomics/Metatranscriptomics Data Preprocessing"),
+                      shiny::mainPanel(shiny::h2("Metagenomics/Metatranscriptomics Data Processing"),
                                        shiny::br(),
                                        shiny::p("Before data can be explored using chordomics it must be presented in the correct format.
                                                 Use this tool to merge both functional (COG) and phylogenetic information from MG-RAST as well as format your data."),
@@ -92,13 +92,14 @@ ChordShinyAppUI <- shiny::fluidPage( shinyjs::useShinyjs(),
                         shiny::fileInput("rawMPAfile",
                                          label="Upload MPA CSVs here",
                                          multiple = F),
+                        shiny::hr(),
                         # shiny::textInput("MGMid","MG-RAST Identification",placeholder = "mgm4491407.3"),
                         shiny::actionButton("preparedata", "Prepare Data"),
                         shiny::uiOutput("thedownloadbutton")
                       ),
 
                       shiny::mainPanel(shiny::verbatimTextOutput("Status"),
-                                       shiny::h2("Metaproteomics Data Preprocessing"),
+                                       shiny::h2("Metaproteomics Data Processing"),
                                        shiny::br(),
                                        shiny::p("Before data can be explored using chordomics it must be presented in the correct format.
                                                 Use this tool to get functional (COG) information using the UniProt API as well as format your data."),
