@@ -164,6 +164,7 @@ ChordShinyAppServer <- function(input, output, session) {
                                         TMP_DIR = DATA_DIR,
                                         e=environment())
 
+          if(processData == 1){stop("mg rast ID invalid")}
           # assign taxa / LCA
           logging <- paste0(logging,"\nAssigning LCA...")
           shinyjs::html("progressMGRAST",logging)
@@ -193,8 +194,12 @@ ChordShinyAppServer <- function(input, output, session) {
 
         },
         error = function(e){
-          shiny::showNotification(ui = paste("Possible network error, please try again"),duration = 5)
-          print("try again network error")
+          if(processData ==1){
+            shiny::showNotification(ui = paste("Invalid MG-RAST ID; ID's should start with 'mgm' followed by digits"),duration = 5)
+          } else{
+            shiny::showNotification(ui = paste("Possible network error, please try again"),duration = 5)
+          }
+          # print("try again network error")
           print(e)})
 
     }else if(!is.null(input$MGRASTcogfile) & !is.null(input$MGRASTtaxfile) & !is.null(input$MGRASTinfofile)){

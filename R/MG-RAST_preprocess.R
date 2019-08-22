@@ -12,6 +12,9 @@ processMGRAST <- function(ID = NULL,
 
 if(!is.null(ID)){
 
+      if(!grepl("mgm",ID)) {
+        return(1)
+      }
       # for example,
       ORG_DB <- "RefSeq"
       ONT_DB <- "COG"
