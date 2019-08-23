@@ -519,12 +519,13 @@ ChordShinyAppServer <- function(input, output, session) {
 
 
   Total_entries <- shiny::reactiveVal()
+  Visible_entries <- shiny::reactiveVal()
   # Show total entries shown
   output$Total <- shiny::renderText({
     shiny::req(Total_entries())
     # if(!is.null(Total_entries)){
 
-      return(paste("<b>Total count:</b> ",Total_entries()))
+      return(paste("<b>Shown:</b> ",Visible_entries(),"/", Total_entries(),"(",signif(100*Visible_entries()/Total_entries(),2),"%)"))
     # }
     })
 
@@ -587,7 +588,7 @@ ChordShinyAppServer <- function(input, output, session) {
     shiny::req(d)
     # Assign selected datasets
     table1 <- as.data.frame(Data()[[d]], stringsAsFactors = F)
-
+    Total_entries(nrow(table1))
     # level of selected taxonomic rank
     s<- input$tbl_rows_selected
 
@@ -679,7 +680,7 @@ ChordShinyAppServer <- function(input, output, session) {
     })
 
     # assign Total_entries
-    Total_entries(nrow(chord_table))
+    Visible_entries(nrow(chord_table))
 
     # summarise the tibble
     mat_list<- chord_table %>% dplyr::group_by(taxonomy,functionCol) %>% dplyr::summarise(n=dplyr::n())
