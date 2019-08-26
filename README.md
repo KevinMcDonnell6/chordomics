@@ -1,6 +1,6 @@
 [![Build Status](https://travis-ci.org/KevinMcDonnell6/chordomics.svg?branch=master)](https://travis-ci.org/KevinMcDonnell6/chordomics)
 # Chordomics
-[![Screenshot](https://github.com/KevinMcDonnell6/chordomics/blob/master/Walkthroughs/Screenshot.png)](https://github.com/KevinMcDonnell6/chordomics)
+[![Screenshot](https://github.com/KevinMcDonnell6/chordomics/blob/master/Walkthroughs/Screenshots/Screenshot.png)](https://github.com/KevinMcDonnell6/chordomics)
 
 Chordomics is a tool to visualize and interpret linked data, such as from metagenomics or metaproteomics where both taxonomic and functional data is obtained.
 
