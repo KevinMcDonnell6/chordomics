@@ -46,12 +46,12 @@ Alternatively you can manually download the required files and upload them to Ch
 ## Data Processing
 The App can handle both MG-RAST data as well as MetaProteomeAnalyzer (MPA) files.
 
-For metagenomic or metatranscriptomic data first upload your samples to MG-RAST. Then enter your MG-RAST ID into chordomics.
+For metagenomic or metatranscriptomic data first upload your samples to MG-RAST. Then enter your MG-RAST ID or upload the correct files to the app. Chordomics will merge the taxonomy and function files as well as adding the descriptions for the COG IDs that MG-RAST has annotated the data with. The processed file can then be saved.
 
-For metaproteomics data upload your MPA files one at a time for processing,
+For metaproteomics data upload your data to the MPA and then export the Meta-proteins file. Then upload this file to the app. Chordomics will use the UniProt API to add COG IDs to each of the meta-proteins. It will then add the descriptions for each ID. The processed file can then be saved.
 
 ## Visualising the data
-The Plot tab is where the user is able to view the data they have loaded into the App. 
+The Chord Plot tab is where the user is able to view the data they have loaded into the App. 
 * Clicking Load Example Data shows already processed data for the user to experiment with.
 * The datasets can be viewed together (default) or individually by selecting the name of the dataset on the left panel.
 * Selecting a taxonomic rank from the panel changes the rank shown on the plot.
@@ -60,10 +60,10 @@ The Plot tab is where the user is able to view the data they have loaded into th
 
 # What it is doing
 ## with metaproteomics data
-Given a metaproteomics csv file, Chordomics gets functional data from UniProt, which is then saved to a `chordomics` folder in your home directory.  This makes it easier to re-run analyses. Certain check are performed to make sure all the required fields have data, and the cleaned data with the COG annotations is returned to be downloaded.
+Given a metaproteomics csv file, Chordomics gets functional data from UniProt, which can then be saved to your computer.  This makes it easier to re-run analyses. Certain checks are performed to make sure all the required fields have data, and the cleaned data with the COG annotations is returned to be downloaded.
 
 ## with metagenomic/metatransciptomic data
-Given an MG-RAST ID (usually starting with "mgm"), the taxonomy and function annotations are downloaded.  Be warned -- this can take a long time.  For now, please only use datasets from assembled metagenomes, rather than just reads.  The datases are combined -- retaining only the sequences for which both functional and taxonomic annotations are available. The COGs are assigned, NCBI taxids are linked, and the data is returned to be downloaded.
+Given an MG-RAST ID (usually starting with "mgm"), the taxonomy and function annotations are downloaded. Be warned -- this can take a long time. Alternatively these files can be uploaded manually to Chordomics.  For now, please only use datasets from assembled metagenomes, rather than just reads.  The datases are combined -- retaining only the sequences for which both functional and taxonomic annotations are available. The COGs are assigned, NCBI taxids are linked, and the data is returned to be downloaded.
 
 
 
