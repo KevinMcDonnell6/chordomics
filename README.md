@@ -24,14 +24,9 @@ devtools::install_github('KevinMcDonnell6/chordomics')
 
 
 # Running Chordomics
-## Preparing your metaproteomics data
-The input data must be `.csv` format, with column names. The output from programs like MPA^[<https://github.com/compomics/meta-proteome-analyzer>] is ideal; It will look for columns "Proteins", containing one or more Uniprot accessions.
 
-## Preparing your metagenomics data
-You will need a run ID from MG-RAST^[<http://www.mg-rast.org/>]. 
-
-## Using the Chordomics viewer
-Next, launch the app!
+## Using Chordomics
+Launch the app!
 
 ```r
 chordomics::launchApp()
@@ -40,6 +35,13 @@ chordomics::launchApp()
 Once the app is running, follow the steps to preprocess, load, and view your data!
 
 For detailed step-by-step walkthroughs look into the "Walkthroughs" folder above.
+
+## Preparing your metaproteomics data
+The input data must be `.csv` format, with column names. The output from programs like MPA^[<https://github.com/compomics/meta-proteome-analyzer>] is ideal (see "MPAdata" Walkthrough); It will look for columns "Proteins", containing one or more Uniprot accessions.
+
+## Preparing your metagenomics data
+You will need a run ID from from a public repository on MG-RAST^[<http://www.mg-rast.org/>]. 
+Alternatively you can manually download the required files and upload them to Chordomics. For more information look at the "MGRASTdata" and "MGRASTDataProcessing" files in the Walkthroughs folder above.
 
 ## Data Processing
 The App can handle both MG-RAST data as well as MetaProteomeAnalyzer (MPA) files.
