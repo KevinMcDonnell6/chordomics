@@ -4,6 +4,9 @@
 
 Chordomics is a tool to visualize and interpret linked data, such as from metagenomics or metaproteomics where both taxonomic and functional data is obtained.
 
+# Demo Version
+The demonstration version of Chordomics is available at https://kmcd.shinyapps.io/chordomics/. Here, a toy dataset is provided to allow you to see the explorative capabilities Chordomics provides before you need to download it!
+
 # Installation
 To install from the commandline, download and run the install script:
 
