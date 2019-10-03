@@ -86,3 +86,13 @@ The fields in the csv file should be quoted, as the lists of Uniprot accessions 
 ## Metagenomic/metatranscriptomic utility input data
 If your selected MG-RAST id is running slowly, it is likely due to the time it takes to download the data files.  Sadly, MG-RAST does not provide any given file with both taxonomic and functional information, so we have to download both and merge them.  Try with a small dataset first, such as "mgm4762935.3".
 
+# Cite us!!
+If you like Chordomics and use it in a publication, please cite us!
+```
+@article{mcdonnell2019chordomics,
+  title={Chordomics: a visualisation tool for linking function to phylogeny in microbiomes},
+  author={McDonnell, Kevin and Waters, Nicholas and Howley, Enda and Abram, Florence},
+  journal={Bioinformatics},
+  year={2019}
+}
+```
