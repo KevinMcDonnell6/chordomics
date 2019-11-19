@@ -98,3 +98,6 @@ If you like Chordomics and use it in a publication, please cite us!
   year={2019}
 }
 ```
+
+# Feedback or Questions?
+Got any feedback for us or questions about Chordomics? Please feel free to log an issue up above!
