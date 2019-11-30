@@ -53,7 +53,7 @@
     if (SVGSources.length > 1 & false) {
       createPopover(SVGSources);
     } else if (SVGSources.length > 0) {
-      download(SVGSources[0]);
+      download(SVGSources[1]);
     } else {
       alert("The Crowbar couldn’t find any SVG nodes.");
     }
