@@ -388,7 +388,7 @@ ChordShinyAppServer <- function(input, output, session) {
     # Loop through the datasets, loading successive ones into a list
     for (i in 1:numberOfFiles) {
       name_ <- paste0("df", i)
-      tmpdf <- read.csv(files[i])
+      tmpdf <- read.csv(files[i],stringsAsFactors = F)
       tmpdf <-  tmpdf %>%
         dplyr::select(intersect(colnames(tmpdf),
                                 c(taxonomicRanksList, functionList)))
