@@ -72,14 +72,15 @@ def get_args():  # pragma: no cover
         help="number of total seqs, used to calculate overall percentages; " +
         "required if API is responding slowly for getting sequence count ",
         required=False)
-    parser.add_argument("--input_data", action="store",
-                        help="input_data file ", required=False)
-    parser.add_argument("--mgm_id", action="store",
-                        help="MG-RAST ID ", required=False)
+    # parser.add_argument("--input_data", action="store",
+    #                     help="input_data file ", required=False)
+    # parser.add_argument("--mgm_id", action="store",
+    #                     help="MG-RAST ID ", required=False)
     parser.add_argument("-o", "--output", action="store",
                         help="destination dir", required=True)
     args = parser.parse_args()
     return args
+
 
 def make_short_name(longname):
     return(" ".join(longname.replace("]", "").replace("[", "").split(" ")[0:2]))
@@ -125,22 +126,20 @@ def make_ont_dict(path):
 
 
 def tally_org_ont(org, ont):
+    n_nomatch = 0
     org_ont_dict = {thisorg: {"onts": [], "counts":[]} for thisorg in org.keys()}
     for i, (thisorg, id_list) in enumerate(org.items()):
-        print(i)
-        print(len(id_list))
         for id in id_list:
-            for read, onts in ont.items():
-                print(read)
-                print(onts)
-                sys.exit()
-                if id == read:
-                    for thisont in onts:
-                        if thisont in org_ont_dict[thisorg]["onts"]:
-                            org_ont_dict[thisorg]["counts"][org_ont_dict[thisorg]["onts"].index(thisont)] += 1
-                        else:
-                            org_ont_dict[thisorg]["counts"].append(1)
-                            org_ont_dict[thisorg]["onts"].append(thisont)
+            try:
+                for thisont in ont[id]:
+                    if thisont in org_ont_dict[thisorg]["onts"]:
+                        org_ont_dict[thisorg]["counts"][org_ont_dict[thisorg]["onts"].index(thisont)] += 1
+                    else:
+                        org_ont_dict[thisorg]["counts"].append(1)
+                        org_ont_dict[thisorg]["onts"].append(thisont)
+            except KeyError:
+                n_nomatch += 1
+    print(str(n_nomatch) + " lacked matches between the ontology and organism sets")
     return(org_ont_dict)
 
 
@@ -202,7 +201,7 @@ def get_name(d, level):
 def main():
     #print("setting up NCBI Taxa database; this takes a while the first time")
     args = get_args()
-    if args.nseqs is None:
+    if args.nseqs is None and False:
         print("Getting number of seqs")
         args.nseqs = get_seq_count(args.mgm_id)
     print("Tallying ontology file")
@@ -217,7 +216,7 @@ def main():
 
     for name in combined.keys():
         combined[name]["lineage"] = make_taxa_dict(name)
-    print("writing  out joined results")
+    print("Writing out joined results")
     with open(args.output, "w") as outf:
         outf.write("Superkingdom\tKingdom\tPhylum\tClass\tOrder\tFamily\tGenus\tSpecies\tCOG_Name\tCOG_Category\n")
         for org, onts_counts_lineage in combined.items():
