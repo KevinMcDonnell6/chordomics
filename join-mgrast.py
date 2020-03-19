@@ -55,6 +55,7 @@ with open(cognames, "r", encoding = "ISO-8859-1") as cogin:
         cognames_dict[cog]={"desc":desc,
                             "catdesc":cogcats_dict[primary_cat]}
 
+
 def get_args():  # pragma: no cover
     parser = argparse.ArgumentParser(
         description="Join MG-RAST datasets for use with chordomics",
@@ -66,20 +67,26 @@ def get_args():  # pragma: no cover
     parser.add_argument(
         "--organism", action="store",
         help="organism file ")
-    parser.add_argument(
-        "--nseqs", action="store",
-        type=int,
-        help="number of total seqs, used to calculate overall percentages; " +
-        "required if API is responding slowly for getting sequence count ",
-        required=False)
+    # parser.add_argument(
+    #     "--nseqs", action="store",
+    #     type=int,
+    #     help="number of total seqs, used to calculate overall percentages; " +
+    #     "required if API is responding slowly for getting sequence count ",
+    #     required=False)
     # parser.add_argument("--input_data", action="store",
     #                     help="input_data file ", required=False)
-    # parser.add_argument("--mgm_id", action="store",
-    #                     help="MG-RAST ID ", required=False)
+    parser.add_argument("--mgm_id", action="store",
+                        help="MG-RAST ID ", required=False)
     parser.add_argument("-o", "--output", action="store",
                         help="destination dir", required=True)
     args = parser.parse_args()
     return args
+
+
+def read_from_url(url, nrows=10000):
+    link = "http://www.somesite.com/details.pl?urn=2344"
+    f = urllib.urlopen(link)
+    myfile = f.read()
 
 
 def make_short_name(longname):
@@ -121,7 +128,7 @@ def make_ont_dict(path):
                 continue
             thisid, m5nr, sequence, annotations = line.strip().split("\t")
             thisid = thisid.replace("|COG", "")
-            ont_dict[thisid] = [x.replace("accession=[", "").split("]")[0]  for x in annotations.split(";")]
+            ont_dict[thisid] = [x.replace("a", "").replace("ccession=[", "").split("],")[0]  for x in annotations.split("];a")]
     return(ont_dict)
 
 
@@ -201,9 +208,9 @@ def get_name(d, level):
 def main():
     #print("setting up NCBI Taxa database; this takes a while the first time")
     args = get_args()
-    if args.nseqs is None and False:
-        print("Getting number of seqs")
-        args.nseqs = get_seq_count(args.mgm_id)
+    # if args.nseqs is None and False:
+    #     print("Getting number of seqs")
+    #     args.nseqs = get_seq_count(args.mgm_id)
     print("Tallying ontology file")
     ont_dict = make_ont_dict(args.ontology)
     print("Processed %i ontology hits" % len(ont_dict))
@@ -217,28 +224,59 @@ def main():
     for name in combined.keys():
         combined[name]["lineage"] = make_taxa_dict(name)
     print("Writing out joined results")
+    missing_cogs = []
+    counter = 0
     with open(args.output, "w") as outf:
-        outf.write("Superkingdom\tKingdom\tPhylum\tClass\tOrder\tFamily\tGenus\tSpecies\tCOG_Name\tCOG_Category\n")
+        outf.write('"X","Superkingdom","Kingdom","Phylum","Class","Order","Family","Genus","Species","COG_Name","COG_Category"\n')
         for org, onts_counts_lineage in combined.items():
             for i, ont in enumerate(onts_counts_lineage["onts"]):
                 # if True:
                 #     print(cognames_dict[ont])
                 #     continue
                 for count in onts_counts_lineage["counts"]:
-                    outf.write(
-                        "{Skingdom}\t{Kingdom}\t{Phylum}\t{Class}\t{Order}\t{Family}\t{Genus}\t{Species}\t{COG_Name}\t{COG_Category}\n".format(
-                            Skingdom=get_name(onts_counts_lineage, "Superkingdom"),
-                            Kingdom=get_name(onts_counts_lineage, "Kingdom"),
-                            Phylum=get_name(onts_counts_lineage, "Phylum"),
-                            Class=get_name(onts_counts_lineage, "Class"),
-                            Order=get_name(onts_counts_lineage, "Order"),
-                            Family=get_name(onts_counts_lineage, "Family"),
-                            Genus=get_name(onts_counts_lineage, "Genus"),
-                            Species=get_name(onts_counts_lineage, "Species"),
-                            COG_Name=cognames_dict[ont]["desc"],
-                            COG_Category=cognames_dict[ont]["catdesc"]
+                    try:
+                        outf.write(
+                            '"{counter}","{Skingdom}","{Kingdom}","{Phylum}","{Class}","{Order}","{Family}","{Genus}","{Species}","{COG_Name}","{COG_Category}"\n'.format(
+                                counter=counter,
+                                Skingdom=get_name(onts_counts_lineage, "Superkingdom"),
+                                Kingdom=get_name(onts_counts_lineage, "Kingdom"),
+                                Phylum=get_name(onts_counts_lineage, "Phylum"),
+                                Class=get_name(onts_counts_lineage, "Class"),
+                                Order=get_name(onts_counts_lineage, "Order"),
+                                Family=get_name(onts_counts_lineage, "Family"),
+                                Genus=get_name(onts_counts_lineage, "Genus"),
+                                Species=get_name(onts_counts_lineage, "Species"),
+                                COG_Name=cognames_dict[ont]["desc"],
+                                COG_Category=cognames_dict[ont]["catdesc"]
+                            )
                         )
-                    )
+                        counter = counter + 1
+                    except KeyError:
+                        if ont not in cognames_dict.keys():
+                            missing_cogs.append(ont)
+                            outf.write(
+                                '"{counter}","{Skingdom}","{Kingdom}","{Phylum}","{Class}","{Order}","{Family}","{Genus}","{Species}","{COG_Name}","{COG_Category}"\n'.format(
+                                    counter=counter,
+                                    Skingdom=get_name(onts_counts_lineage, "Superkingdom"),
+                                    Kingdom=get_name(onts_counts_lineage, "Kingdom"),
+                                    Phylum=get_name(onts_counts_lineage, "Phylum"),
+                                    Class=get_name(onts_counts_lineage, "Class"),
+                                    Order=get_name(onts_counts_lineage, "Order"),
+                                    Family=get_name(onts_counts_lineage, "Family"),
+                                    Genus=get_name(onts_counts_lineage, "Genus"),
+                                    Species=get_name(onts_counts_lineage, "Species"),
+                                    COG_Name=ont,
+                                    COG_Category="UNKNOWN"
+                                )
+                            )
+                            counter = counter + 1
+                        else:
+                            print("Error with the following ontology -- organism: {} -- {}".format(ont, org))
+    print("The following COGs were not found; \n" +
+          "see the old database found at ftp://ftp.ncbi.nih.gov/pub/COG/COG/")
+    print(set(missing_cogs))
+    print("Done!")
+
 
 
 if __name__ == "__main__":
