@@ -166,7 +166,7 @@ ChordShinyAppUI <- shiny::fluidPage( shinyjs::useShinyjs(),
           shiny::p("Datasets can be the output of the previous two processing tabs (1 and 2) or data formatted in the same way."),
           shiny::p("Ensure the file types are csv format and contain headings
                    of taxonomic rank (Superkingdom, Kingdom, Phylum, Class, Order, Family, Genus and/or Species)
-                   and function (COG_Category and/or COG_Name). All other headings are ignored."),
+                   and function (COG_Category and/or COG_Name). All other headings are ignored.  Fields need to be quoted."),
           shiny::p("See example table below.")
           # shiny::uiOutput("github")
 
@@ -225,5 +225,3 @@ ChordShinyAppUI <- shiny::fluidPage( shinyjs::useShinyjs(),
 
   )
 )
-
-
