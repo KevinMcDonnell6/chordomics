@@ -104,7 +104,8 @@ def make_org_dict(path):
             if len(line.strip().split("\t")) != 4:
                 continue
             thisid, m5nr, sequence, annotations = line.strip().split("\t")
-            for annotation in annotations.split(";"):
+            # we dont have a good way to perform LCA on the
+            for annotation in annotations.split(";")[0]:
                 annotation = make_short_name(annotation)
                 thisid = thisid.replace("|RefSeq", "")
                 if annotation not in org_dict.keys():
@@ -146,7 +147,7 @@ def tally_org_ont(org, ont):
                         org_ont_dict[thisorg]["onts"].append(thisont)
             except KeyError:
                 n_nomatch += 1
-    print(str(n_nomatch) + " lacked matches between the ontology and organism sets")
+    print(str(n_nomatch) + " sequences lacked hits in both the ontology and organism sets")
     return(org_ont_dict)
 
 
@@ -285,25 +286,47 @@ if __name__ == "__main__":
 
 def test_make_org_dict():
     test_dict = {
-        'Natronomonas pharaonis': ['mgm4762935.3|contig_121_1069145_length_20328_multi_3_in_1_out_0_12718_14127_-|RefSeq'],
-        'Lactobacillus salivarius': ['mgm4762935.3|contig_51_826956_length_45026_multi_4_in_0_out_0_9855_10283_-|RefSeq'],
-        'Lactobacillus salivarius': ['mgm4762935.3|contig_51_826956_length_45026_multi_4_in_0_out_0_9855_10283_-|RefSeq'],
-        'Ferroglobus placidus': ['mgm4762935.3|contig_81_2449664_length_20179_multi_2_in_0_out_0_4654_6346_+|RefSeq'],
-        'Clostridium botulinum': ['mgm4762935.3|contig_121_1103569_length_8205_multi_2_in_2_out_2_4061_4312_+|RefSeq'],
-        'Aciduliprofundum boonei': ['mgm4762935.3|contig_111_1628766_length_37341_multi_2_in_0_out_0_11642_15072_-|RefSeq'],
-        'Clostridium thermocellum': ['mgm4762935.3|contig_71_7197930_length_16664_multi_2_in_0_out_0_9360_11931_+|RefSeq'],
-        'Clostridium thermocellum': ['mgm4762935.3|contig_71_7197930_length_16664_multi_2_in_0_out_0_9360_11931_+|RefSeq'],
-        'Clostridium thermocellum': ['mgm4762935.3|contig_71_7197930_length_16664_multi_2_in_0_out_0_9360_11931_+|RefSeq'],
-        'Ruminococcus albus': ['mgm4762935.3|contig_101_47814_length_32684_multi_2_in_0_out_0_3909_5352_-|RefSeq'],
-        'Methanosphaera stadtmanae': ['mgm4762935.3|contig_121_282635_length_6565_multi_2_in_0_out_2_2839_4642_-|RefSeq'],
-        'Ammonifex degensii': ['mgm4762935.3|contig_111_1628766_length_37341_multi_2_in_0_out_0_27395_28315_+|RefSeq'],
-        'Methanosaeta thermophila': ['mgm4762935.3|contig_111_1628766_length_37341_multi_2_in_0_out_0_27395_28315_+|RefSeq'],
-        'Paenibacillus sp. JDR-2]': ['mgm4762935.3|contig_121_394099_length_3154_multi_2_in_2_out_0_1_1139_-|RefSeq'],
-        'Methanothermobacter thermautotrophicus': ['mgm4762935.3|contig_121_570908_length_16058_multi_2_in_2_out_2_10587_14405_-|RefSeq'],
-        'Meiothermus ruber': ['mgm4762935.3|contig_121_457105_length_4459_multi_2_in_0_out_1_2831_4299_-|RefSeq']
+        'Natronomonas pharaonis': ['mgm4762935.3|contig_121_1069145_length_20328_multi_3_in_1_out_0_12718_14127_-',
+                                   'mgm4762935.3|contig_121_1069145_length_20328_multi_3_in_1_out_0_12718_14188_-'],
+        'Lactobacillus salivarius': ['mgm4762935.3|contig_51_826956_length_45026_multi_4_in_0_out_0_9855_10283_-',
+                                     'mgm4762935.3|contig_51_826956_length_45026_multi_4_in_0_out_0_9855_10283_-'],
+        'Ferroglobus placidus': ['mgm4762935.3|contig_81_2449664_length_20179_multi_2_in_0_out_0_4654_6346_+'],
+        'Clostridium botulinum': ['mgm4762935.3|contig_121_1103569_length_8205_multi_2_in_2_out_2_4061_4312_+'],
+        'Aciduliprofundum boonei': ['mgm4762935.3|contig_111_1628766_length_37341_multi_2_in_0_out_0_11642_15072_-'],
+        'Clostridium thermocellum': ['mgm4762935.3|contig_71_7197930_length_16664_multi_2_in_0_out_0_9360_11931_+',
+                                     'mgm4762935.3|contig_71_7197930_length_16664_multi_2_in_0_out_0_9360_11931_+',
+                                     'mgm4762935.3|contig_71_7197930_length_16664_multi_2_in_0_out_0_9360_11931_+'],
+        'Ruminococcus albus': ['mgm4762935.3|contig_101_47814_length_32684_multi_2_in_0_out_0_3909_5352_-'], 'Methanosphaera stadtmanae': ['mgm4762935.3|contig_121_282635_length_6565_multi_2_in_0_out_2_2839_4642_-'],
+        'Ammonifex degensii': ['mgm4762935.3|contig_111_1628766_length_37341_multi_2_in_0_out_0_27395_28315_+'], 'Methanosaeta thermophila': ['mgm4762935.3|contig_111_1628766_length_37341_multi_2_in_0_out_0_27395_28315_+'],
+        'Paenibacillus sp.': ['mgm4762935.3|contig_121_394099_length_3154_multi_2_in_2_out_0_1_1139_-'],
+        'Methanothermobacter thermautotrophicus': ['mgm4762935.3|contig_121_570908_length_16058_multi_2_in_2_out_2_10587_14405_-']}
+
+
+
+    {
+        'Natronomonas pharaonis': ['mgm4762935.3|contig_121_1069145_length_20328_multi_3_in_1_out_0_12718_14127_-',
+                                   'mgm4762935.3|contig_121_1069145_length_20328_multi_3_in_1_out_0_12718_14188_-'],
+        'Lactobacillus salivarius': ['mgm4762935.3|contig_51_826956_length_45026_multi_4_in_0_out_0_9855_10283_-'],
+        'Lactobacillus salivarius': ['mgm4762935.3|contig_51_826956_length_45026_multi_4_in_0_out_0_9855_10283_-'],
+        'Ferroglobus placidus': ['mgm4762935.3|contig_81_2449664_length_20179_multi_2_in_0_out_0_4654_6346_+'],
+        'Clostridium botulinum': ['mgm4762935.3|contig_121_1103569_length_8205_multi_2_in_2_out_2_4061_4312_+'],
+        'Aciduliprofundum boonei': ['mgm4762935.3|contig_111_1628766_length_37341_multi_2_in_0_out_0_11642_15072_-'],
+        'Clostridium thermocellum': ['mgm4762935.3|contig_71_7197930_length_16664_multi_2_in_0_out_0_9360_11931_+'],
+        'Clostridium thermocellum': ['mgm4762935.3|contig_71_7197930_length_16664_multi_2_in_0_out_0_9360_11931_+'],
+        'Clostridium thermocellum': ['mgm4762935.3|contig_71_7197930_length_16664_multi_2_in_0_out_0_9360_11931_+'],
+        'Ruminococcus albus': ['mgm4762935.3|contig_101_47814_length_32684_multi_2_in_0_out_0_3909_5352_-'],
+        'Methanosphaera stadtmanae': ['mgm4762935.3|contig_121_282635_length_6565_multi_2_in_0_out_2_2839_4642_-'],
+        'Ammonifex degensii': ['mgm4762935.3|contig_111_1628766_length_37341_multi_2_in_0_out_0_27395_28315_+'],
+        'Methanosaeta thermophila': ['mgm4762935.3|contig_111_1628766_length_37341_multi_2_in_0_out_0_27395_28315_+'],
+        'Paenibacillus sp.': ['mgm4762935.3|contig_121_394099_length_3154_multi_2_in_2_out_0_1_1139_-'],
+        'Methanothermobacter thermautotrophicus': ['mgm4762935.3|contig_121_570908_length_16058_multi_2_in_2_out_2_10587_14405_-'],
+        'Meiothermus ruber': ['mgm4762935.3|contig_121_457105_length_4459_multi_2_in_0_out_1_2831_4299_-']
     }
     org_dict = make_org_dict("./tests/sample/organism")
+    print(org_dict)
     for i  in test_dict.keys():
+        print(test_dict[i])
+        print(org_dict[i])
         assert test_dict[i] == org_dict[i], "mismatched org dict"
 
 

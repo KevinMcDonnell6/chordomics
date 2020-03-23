@@ -45,7 +45,7 @@ For detailed step-by-step walkthroughs look into the "Walkthroughs" folder above
 The input data must be `.csv` format, with column names. The output from programs like MPA^[<https://github.com/compomics/meta-proteome-analyzer>] is ideal (see "MPAdata" Walkthrough); It will look for columns "Proteins", containing one or more Uniprot accessions.
 
 ## Preparing your metagenomics data
-You will need a run ID from from a public repository on MG-RAST^[<http://www.mg-rast.org/>]. 
+You will need a run ID from from a public repository on MG-RAST^[<http://www.mg-rast.org/>].
 Alternatively you can manually download the required files and upload them to Chordomics. For more information look at the "MGRASTdata" and "MGRASTDataProcessing" files in the Walkthroughs folder above.
 
 ## Data Processing
@@ -56,7 +56,7 @@ For metagenomic or metatranscriptomic data first upload your samples to MG-RAST.
 For metaproteomics data upload your data to the MPA and then export the Meta-proteins file. Then upload this file to the app. Chordomics will use the UniProt API to add COG IDs to each of the meta-proteins. It will then add the descriptions for each ID. The processed file can then be saved.
 
 ## Visualising the data
-The Chord Plot tab is where the user is able to view the data they have loaded into the App. 
+The Chord Plot tab is where the user is able to view the data they have loaded into the App.
 * Clicking Load Example Data shows already processed data for the user to experiment with.
 * The datasets can be viewed together (default) or individually by selecting the name of the dataset on the left panel.
 * Selecting a taxonomic rank from the panel changes the rank shown on the plot.
@@ -87,6 +87,25 @@ The fields in the csv file should be quoted, as the lists of Uniprot accessions 
 
 ## Metagenomic/metatranscriptomic utility input data
 If your selected MG-RAST id is running slowly, it is likely due to the time it takes to download the data files.  Sadly, MG-RAST does not provide any given file with both taxonomic and functional information, so we have to download both and merge them.  Try with a small dataset first, such as "mgm4762935.3".
+
+## Using `join-mgrast.py`
+We developed `join-mgrast.py` to format the MG-RAST results from short-read (non-assembled)  data.  For these datasets, downloading and merging is very time consuming; this script reads in ontology and organism files and joins with an indexing scheme that is much more effecient than the approach used for assembled meta(gene/prote)omes.  It requires the [ete3](http://etetoolkit.org/) library, which speeds up the taxonomic parsing.
+
+```
+conda create -n joinmg ete3 requests
+conda activate joinmg
+python join-mgrast.py --organism ~/chordomics/mgm4762935.3/organism --ontology ~/chordomics/mgm4762935.3/ontology -o mgm4762935.3.csv
+```
+
+The resulting file can be visualized with Chordomics. If you end up in a really big file, try downsampling:
+
+```bash
+head -n 1 mgm4762935.3.csv > downsampled.csv
+# shuffle the file, take the head of the file, remove the header if its in there
+shuf mgm4762935.3.csv | head 10000 | gsub -v "COG_Names" >> downsampled.csv
+```
+
+
 
 # Cite us!!
 If you like Chordomics and use it in a publication, please cite us!
