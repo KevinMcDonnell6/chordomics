@@ -110,11 +110,15 @@ shuf mgm4762935.3.csv | head 10000 | gsub -v "COG_Names" >> downsampled.csv
 # Cite us!!
 If you like Chordomics and use it in a publication, please cite us!
 ```
-@article{mcdonnell2019chordomics,
-  title={Chordomics: a visualisation tool for linking function to phylogeny in microbiomes},
+@article{mcdonnell2020chordomics,
+  title={Chordomics: a visualization tool for linking function to phylogeny in microbiomes},
   author={McDonnell, Kevin and Waters, Nicholas and Howley, Enda and Abram, Florence},
   journal={Bioinformatics},
-  year={2019}
+  volume={36},
+  number={4},
+  pages={1309--1310},
+  year={2020},
+  publisher={Oxford University Press}
 }
 ```
 
